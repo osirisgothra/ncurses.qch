@@ -1,0 +1,114 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of scanw</TITLE>
+</HEAD><BODY>
+<H1>scanw</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>scanw</B>,
+<B>wscanw</B>,
+<B>mvscanw</B>,
+<B>mvwscanw</B>,
+<B>vwscanw</B>, <B>vw_scanw</B> - convert formatted input from a <B>curses</B> window
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int scanw(char *fmt, ...);</B>
+<BR>
+
+<B>int wscanw(WINDOW *win, char *fmt, ...);</B>
+<BR>
+
+<B>int mvscanw(int y, int x, char *fmt, ...);</B>
+<BR>
+
+<B>int mvwscanw(WINDOW *win, int y, int x, char *fmt, ...);</B>
+<BR>
+
+<B>int vw_scanw(WINDOW *win, char *fmt, va_list varglist);</B>
+<BR>
+
+<B>int vwscanw(WINDOW *win, char *fmt, va_list varglist);</B>
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The <B>scanw</B>, <B>wscanw</B> and <B>mvscanw</B> routines are analogous to
+<B>scanf</B> [see <B><A HREF="/cgi-bin/man/man2html?3+scanf">scanf</A></B>(3)].  The effect of these routines is as though
+<B>wgetstr</B> were called on the window, and the resulting line used as input
+for <B><A HREF="/cgi-bin/man/man2html?3+sscanf">sscanf</A></B>(3).  Fields which do not map to a variable in the <I>fmt</I>
+field are lost.
+<P>
+
+The <B>vwscanw</B> and <B>vw_scanw</B> routines are analogous to <B>vscanf</B>.
+They perform a <B>wscanw</B> using a variable argument list.
+The third argument is a <I>va_list</I>,
+a pointer to a list of arguments, as defined in <B>&lt;<A HREF="file:///usr/include/stdarg.h">stdarg.h</A>&gt;</B>.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+<B>vwscanw</B> returns <B>ERR</B> on failure and an integer equal to the
+number of fields scanned on success.
+<P>
+
+Applications may use the return value from the <B>scanw</B>, <B>wscanw</B>,
+<B>mvscanw</B> and <B>mvwscanw</B> routines to determine the number of fields
+which were mapped in the call.
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAF">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+The XSI Curses standard, Issue 4 describes these functions.  The function
+<B>vwscanw</B> is marked TO BE WITHDRAWN, and is to be replaced by a function
+<B>vw_scanw</B> using the <B>&lt;<A HREF="file:///usr/include/stdarg.h">stdarg.h</A>&gt;</B> interface.
+The Single Unix Specification, Version 2 states that
+<B>vw_scanw</B>  is preferred to <B>vwscanw</B> since the latter requires
+including <B>&lt;<A HREF="file:///usr/include/varargs.h">varargs.h</A>&gt;</B>, which
+cannot be used in the same file as <B>&lt;<A HREF="file:///usr/include/stdarg.h">stdarg.h</A>&gt;</B>.
+This implementation uses <B>&lt;<A HREF="file:///usr/include/stdarg.h">stdarg.h</A>&gt;</B> for both, because that header
+is included in <B>&lt;curses.h</B>&gt;.
+<P>
+
+Both XSI and The Single Unix Specification, Version 2 state that these
+functions return ERR or OK.
+Since the underlying <B>scanf</B> can return the number of items scanned,
+and the SVr4 code was documented to use this feature,
+this is probably an editing error which was introduced in XSI,
+rather than being done intentionally.
+Portable applications should only test if the return value is ERR,
+since the OK value (zero) is likely to be misleading.
+One possible way to get useful results would be to use a &quot;%n&quot; conversion
+at the end of the format string to ensure that something was processed.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES), <B>getstr</B>(3NCURSES), <B>printw</B>(3NCURSES), <B><A HREF="/cgi-bin/man/man2html?3+scanf">scanf</A></B>(3)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">PORTABILITY</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

@@ -1,0 +1,86 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of delch</TITLE>
+</HEAD><BODY>
+<H1>delch</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>delch</B>,
+<B>wdelch</B>,
+<B>mvdelch</B>,
+<B>mvwdelch</B> - delete character under the cursor in a <B>curses</B> window
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int delch(void);</B>
+<BR>
+
+<B>int wdelch(WINDOW *win);</B>
+<BR>
+
+<B>int mvdelch(int y, int x);</B>
+<BR>
+
+<B>int mvwdelch(WINDOW *win, int y, int x);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+These routines delete the character under the cursor; all characters to the
+right of the cursor on the same line are moved to the left one position and the
+last character on the line is filled with a blank.  The cursor position does
+not change (after moving to <I>y</I>, <I>x</I>, if specified).  (This does not
+imply use of the hardware delete character feature.)
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+All routines return the integer <B>ERR</B> upon failure and an <B>OK</B> (SVr4
+specifies only &quot;an integer value other than <B>ERR</B>&quot;) upon successful
+completion.
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that <B>delch</B>, <B>mvdelch</B>, and <B>mvwdelch</B> may be macros.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are described in the XSI Curses standard, Issue 4.  The
+standard specifies that they return <B>ERR</B> on failure, but specifies no
+error conditions.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

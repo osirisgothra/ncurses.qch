@@ -1,0 +1,203 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of get_wstr</TITLE>
+</HEAD><BODY>
+<H1>get_wstr</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>get_wstr</B>,
+<B>getn_wstr</B>,
+<B>wget_wstr</B>,
+<B>wgetn_wstr</B>,
+<B>mvget_wstr</B>,
+<B>mvgetn_wstr</B>,
+<B>mvwget_wstr</B>,
+<B>mvwgetn_wstr</B> - get an array of wide characters from a curses terminal keyboard
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<PRE>
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+
+<B>int get_wstr(wint_t *</B><I>wstr</I><B>);</B>
+<BR>
+<B>int getn_wstr(wint_t *</B><I>wstr</I><B>, int </B><I>n</I><B>);</B>
+<BR>
+<B>int wget_wstr(WINDOW *</B><I>win</I><B>, wint_t *</B><I>wstr</I><B>);</B>
+<BR>
+<B>int wgetn_wstr(WINDOW *</B><I>win</I><B>, wint_t *</B><I>wstr</I><B>, int </B><I>n</I><B>);</B>
+<BR>
+<B>int mvget_wstr(int </B><I>y</I><B>, int </B><I>x</I><B>, wint_t *</B><I>wstr</I><B>);</B>
+<BR>
+<B>int mvgetn_wstr(int </B><I>y</I><B>, int </B><I>x</I><B>, wint_t *</B><I>wstr</I><B>, int </B><I>n</I><B>);</B>
+<BR>
+<B>int mvwget_wstr(WINDOW *</B><I>win</I><B>, int </B><I>y</I><B>, int </B><I>x</I><B>, wint_t *</B><I>wstr</I><B>);</B>
+<BR>
+<B>int mvwgetn_wstr(WINDOW *</B><I>win</I><B>, int </B><I>y</I><B>, int </B><I>x</I><B>, wint_t *</B><I>wstr</I><B>, int </B><I>n</I><B>);</B>
+</PRE>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The effect of
+<B>get_wstr</B>
+is as though a series of calls
+to
+<B>get_wch</B>
+were made, until a newline, other end-of-line, or end-of-file condition is processed.
+An end-of-file condition is represented by <B>WEOF</B>, as defined in <B>&lt;<A HREF="file:///usr/include/wchar.h">wchar.h</A>&gt;</B>.
+The newline and end-of-line conditions are represented by the <B>\n</B> <B>wchar_t</B> value.
+In all instances, the end of the string is terminated by a null <B>wchar_t</B>.
+The routine places resulting values in the area pointed to by <I>wstr</I>.
+<P>
+
+The user's erase and kill characters are interpreted.  If keypad
+mode is on for the window, <B>KEY_LEFT</B> and <B>KEY_BACKSPACE</B>
+are both considered equivalent to the user's kill character.
+<P>
+
+Characters input are echoed only if <B>echo</B> is currently on.  In that case,
+backspace is echoed as deletion of the previous character (typically a left
+motion).
+<P>
+
+The effect of
+<B>wget_wstr</B>
+is as though a series of
+calls to
+<B>wget_wch</B>
+were made.
+<P>
+
+The effect of
+<B>mvget_wstr</B>
+is as though a call to
+<B>move</B>
+and then a series of calls to
+<B>get_wch</B>
+were
+made.
+<P>
+
+The effect of
+<B>mvwget_wstr</B>
+is as though a call to
+<B>wmove</B>
+and then a series of calls to
+<B>wget_wch</B>
+were made.
+<P>
+
+The
+<B>getn_wstr</B>,
+<B>mvgetn_wstr</B>,
+<B>mvwgetn_wstr</B>, and
+<B>wgetn_wstr</B>
+functions are identical
+to the
+<B>get_wstr</B>,
+<B>mvget_wstr</B>,
+<B>mvwget_wstr</B>, and
+<B>wget_wstr</B>
+functions, respectively,
+except that the
+<B>*n_*</B>
+versions read at most
+<I>n</I>
+characters, letting the application prevent overflow of the
+input buffer.
+<A NAME="lbAE">&nbsp;</A>
+<H2>NOTES</H2>
+
+Using
+<B>get_wstr</B>,
+<B>mvget_wstr</B>,
+<B>mvwget_wstr</B>, or
+<B>wget_wstr</B>
+to read a line that
+overflows the array pointed to by
+<B>wstr</B>
+causes undefined
+results.
+The use of
+<B>getn_wstr</B>,
+<B>mvgetn_wstr</B>,
+<B>mvwgetn_wstr</B>, or
+<B>wgetn_wstr</B>, respectively, is recommended.
+<P>
+
+These functions cannot return <B>KEY_</B> values because there
+is no way to distinguish a <B>KEY_</B> value from a valid <B>wchar_t</B> value.
+<P>
+
+All of these routines except <B>wgetn_wstr</B> may be macros.
+<A NAME="lbAF">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+All of these functions return <B>OK</B> upon successful completion.
+Otherwise, they return <B>ERR</B>.
+<P>
+
+Functions using a window parameter return an error if it is null.
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>wgetn_wstr</B><DD>
+returns an error if the associated call to <B>wget_wch</B> failed.
+</DL>
+</DL>
+
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are described in The Single Unix Specification, Version 2.
+No error conditions are defined.
+This implementation returns ERR if the window pointer is null,
+or if the lower-level <B>wget_wch</B> call returns an ERR.
+In the latter case,
+an ERR return without other data is treated as an end-of-file condition,
+and the returned array contains a <B>WEOF</B> followed by a null <B>wchar_t</B>.
+<P>
+
+X/Open curses documents these functions to pass an array of <B>wchar_t</B>,
+but all of the vendors implement this using <B>wint_t</B>.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+Functions:
+<B>ncurses</B>(3NCURSES),
+<B>get_wch</B>(3NCURSES),
+<B>getstr</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">NOTES</A><DD>
+<DT><A HREF="#lbAF">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

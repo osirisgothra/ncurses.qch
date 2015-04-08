@@ -1,0 +1,385 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of util</TITLE>
+</HEAD><BODY>
+<H1>util</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+
+
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>delay_output</B>,
+<B>filter</B>,
+<B>flushinp</B>,
+<B>getwin</B>,
+<B>key_name</B>,
+<B>keyname</B>,
+<B>nofilter</B>,
+<B>putwin</B>,
+<B>unctrl</B>,
+<B>use_env</B>,
+<B>use_tioctl</B>,
+<B>wunctrl</B> - miscellaneous <B>curses</B> utility routines
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>char *unctrl(chtype c);</B>
+<BR>
+
+<B>wchar_t *wunctrl(cchar_t *c);</B>
+<BR>
+
+<B>char *keyname(int c);</B>
+<BR>
+
+<B>char *key_name(wchar_t w);</B>
+<BR>
+
+<B>void filter(void);</B>
+<BR>
+
+<B>void nofilter(void);</B>
+<BR>
+
+<B>void use_env(bool f);</B>
+<BR>
+
+<B>void use_tioctl(bool f);</B>
+<BR>
+
+<B>int putwin(WINDOW *win, FILE *filep);</B>
+<BR>
+
+<B>WINDOW *getwin(FILE *filep);</B>
+<BR>
+
+<B>int delay_output(int ms);</B>
+<BR>
+
+<B>int flushinp(void);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The <B>unctrl</B> routine returns a character string which is a printable
+representation of the character <I>c</I>, ignoring attributes.
+Control characters are displayed in the <B>^</B><I>X</I> notation.
+Printing characters are displayed as is.
+The corresponding <B>wunctrl</B> returns a printable representation of
+a wide character.
+<P>
+
+The <B>keyname</B> routine returns a character string
+corresponding to the key <I>c</I>:
+<DL COMPACT><DT><DD>
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+Printable characters are displayed as themselves,
+e.g., a one-character string containing the key.
+
+<DT>&bull;<DD>
+
+Control characters are displayed in the <B>^</B><I>X</I> notation.
+
+<DT>&bull;<DD>
+
+DEL (character 127) is displayed as <B>^?</B>.
+
+<DT>&bull;<DD>
+
+Values above 128 are either meta characters
+(if the screen has not been initialized,
+or if <B>meta</B> has been called with a TRUE parameter),
+shown in the <B>M-</B><I>X</I> notation,
+or are displayed as themselves.
+In the latter case, the values may not be printable;
+this follows the X/Open specification.
+
+<DT>&bull;<DD>
+
+Values above 256 may be the names of the names of function keys.
+
+<DT>&bull;<DD>
+
+Otherwise (if there is no corresponding name) the function returns null,
+to denote an error.
+X/Open also lists an &quot;UNKNOWN KEY&quot; return value, which some implementations
+return rather than null.
+</DL>
+</DL>
+
+<P>
+
+The corresponding <B>key_name</B> returns a character string corresponding
+to the wide-character value <I>w</I>.
+The two functions do not return the same set of strings;
+the latter returns null where the former would display a meta character.
+<P>
+
+The <B>filter</B> routine, if used, must be called before <B>initscr</B> or
+<B>newterm</B> are called.  The effect is that, during those calls, <B>LINES</B>
+is set to 1; the capabilities <B>clear</B>, <B>cup</B>, <B>cud</B>, <B>cud1</B>,
+<B>cuu1</B>, <B>cuu</B>, <B>vpa</B> are disabled; and the <B>home</B> string is
+set to the value of <B>cr</B>.
+<P>
+
+The <B>nofilter</B> routine cancels the effect of a preceding <B>filter</B>
+call.
+That allows the caller to initialize a screen on a different device,
+using a different value of <B>$TERM</B>.
+The limitation arises because the <B>filter</B> routine modifies the
+in-memory copy of the terminal information.
+<P>
+
+The <B>use_env</B> routine, if used,
+should be called before <B>initscr</B> or
+<B>newterm</B> are called
+(because those compute the screen size).
+It modifies the way <B>ncurses</B> treats environment variables
+when determining the screen size.
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+Normally ncurses looks first at the terminal database for the screen size.
+<DT><DD>
+If <B>use_env</B> was called with <B>FALSE</B> for parameter,
+it stops here unless
+If <B>use_tioctl</B> was also called with <B>TRUE</B> for parameter.
+
+<DT>&bull;<DD>
+
+Then it asks for the screen size via operating system calls.
+If successful,
+it overrides the values from the terminal database.
+
+<DT>&bull;<DD>
+
+Finally (unless <B>use_env</B> was called with <B>FALSE</B> parameter),
+ncurses examines the <B>LINES</B> or <B>COLUMNS</B> environment variables,
+using a value in those to override the results
+from the operating system or terminal database.
+<DT><DD>
+Ncurses also updates the screen size in response to SIGWINCH,
+unless overridden by the <B>LINES</B> or <B>COLUMNS</B> environment variables,
+</DL>
+<P>
+
+The <B>use_tioctl</B> routine, if used,
+should be called before <B>initscr</B> or <B>newterm</B> are called
+(because those compute the screen size).
+After <B>use_tioctl</B> is called with <B>TRUE</B> as an argument,
+ncurses modifies the last step in its computation of screen size as follows:
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+checks if the <B>LINES</B> and <B>COLUMNS</B> environment variables
+are set to a number greater than zero.
+
+<DT>&bull;<DD>
+
+for each, ncurses updates the corresponding environment variable
+with the value that it has obtained via operating system call
+or from the terminal database.
+
+<DT>&bull;<DD>
+
+ncurses re-fetches the value of the environment variables so that
+it is still the environment variables which set the screen size.
+</DL>
+<P>
+
+The <B>use_env</B> and <B>use_tioctl</B> routines combine as
+summarized here:
+<CENTER><TABLE>
+<TR VALIGN=top><TD><I>use_env</I></TD><TD><I>use_tioctl</I></TD><TD><I>Summary</I><BR></TD></TR>
+<TR VALIGN=top><TD><HR></TD><TD><HR></TD><TD><HR></TD></TR>
+<TR VALIGN=top><TD>TRUE</TD><TD>TRUE</TD><TD>
+ncurses updates $LINES and $COLUMNS based on operating system calls.
+<BR></TD></TR>
+<TR VALIGN=top><TD>FALSE</TD><TD>TRUE</TD><TD>
+ncurses ignores $LINES and $COLUMNS, uses operating system calls to obtain size.
+<BR></TD></TR>
+<TR VALIGN=top><TD>FALSE</TD><TD>FALSE</TD><TD>
+ncurses relies on the terminal database to determine size.
+<BR></TD></TR>
+</TABLE></CENTER>
+
+<P>
+
+The <B>putwin</B> routine writes all data associated with window <I>win</I> into
+the file to which <I>filep</I> points.  This information can be later retrieved
+using the <B>getwin</B> function.
+<P>
+
+The <B>getwin</B> routine reads window related data stored in the file by
+<B>putwin</B>.  The routine then creates and initializes a new window using that
+data.  It returns a pointer to the new window.
+<P>
+
+The <B>delay_output</B> routine inserts an <I>ms</I> millisecond pause
+in output.  This routine should not be used extensively because
+padding characters are used rather than a CPU pause.
+If no padding character is specified,
+this uses <B>napms</B> to perform the delay.
+<P>
+
+The <B>flushinp</B> routine throws away any typeahead that has been typed by the
+user and has not yet been read by the program.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+Except for <B>flushinp</B>, routines that return an integer return <B>ERR</B>
+upon failure and <B>OK</B> (SVr4 specifies only &quot;an integer value other than
+<B>ERR</B>&quot;) upon successful completion.
+<P>
+
+Routines that return pointers return <B>NULL</B> on error.
+<P>
+
+X/Open does not define any error conditions.
+In this implementation
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>flushinp</B><DD>
+returns an error if the terminal was not initialized.
+<DT><B>meta</B><DD>
+returns an error if the terminal was not initialized.
+<DT><B>putwin</B><DD>
+returns an error if the associated <B>fwrite</B> calls return an error.
+</DL>
+</DL>
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+The XSI Curses standard, Issue 4 describes these functions.
+It states that <B>unctrl</B> and <B>wunctrl</B> will return a null pointer if
+unsuccessful, but does not define any error conditions.
+This implementation checks for three cases:
+<DL COMPACT><DT><DD>
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+the parameter is a 7-bit US-ASCII code.
+This is the case that X/Open Curses documented.
+
+<DT>&bull;<DD>
+
+the parameter is in the range 128-159, i.e., a C1 control code.
+If <B>use_legacy_coding</B> has been called with a <B>2</B> parameter,
+<B>unctrl</B> returns the parameter, i.e., a one-character string with
+the parameter as the first character.
+Otherwise, it returns ``~@'', ``~A'', etc.,
+analogous to ``^@'', ``^A'', C0 controls.
+<DT><DD>
+X/Open Curses does not document whether <B>unctrl</B> can be called before
+initializing curses.
+This implementation permits that,
+and returns the ``~@'', etc., values in that case.
+
+<DT>&bull;<DD>
+
+parameter values outside the 0 to 255 range.
+<B>unctrl</B> returns a null pointer.
+</DL>
+</DL>
+
+<P>
+
+The SVr4 documentation describes the action of <B>filter</B> only in the vaguest
+terms.  The description here is adapted from the XSI Curses standard (which
+erroneously fails to describe the disabling of <B>cuu</B>).
+<P>
+
+The strings returned by <B>unctrl</B> in this implementation are determined
+at compile time,
+showing C1 controls from the upper-128 codes with a `~' prefix rather than `^'.
+Other implementations have different conventions.
+For example, they may show both sets of control characters with `^',
+and strip the parameter to 7 bits.
+Or they may ignore C1 controls and treat all of the upper-128 codes as
+printable.
+This implementation uses 8 bits but does not modify the string to reflect
+locale.
+The <B>use_legacy_coding</B> function allows the caller to
+change the output of <B>unctrl</B>.
+<P>
+
+Likewise, the <B>meta</B> function allows the caller to change the
+output of <B>keyname</B>, i.e.,
+it determines whether to use the `M-' prefix
+for ``meta'' keys (codes in the range 128 to 255).
+Both <B>use_legacy_coding</B> and <B>meta</B> succeed only after
+curses is initialized. 
+X/Open Curses does not document the treatment of codes 128 to 159.
+When treating them as ``meta'' keys
+(or if <B>keyname</B> is called before initializing curses),
+this implementation returns strings ``M-^@'', ``M-^A'', etc.
+<P>
+
+The <B>keyname</B> function may return the names of user-defined
+string capabilities which are defined in the terminfo entry via the <B>-x</B>
+option of <B>tic</B>.
+This implementation automatically assigns at run-time keycodes to 
+user-defined strings which begin with &quot;k&quot;.
+The keycodes start at KEY_MAX, but are not guaranteed to be 
+the same value for different runs because user-defined codes are
+merged from all terminal descriptions which have been loaded.
+The <B>use_extended_names</B> function controls whether this data is
+loaded when the terminal description is read by the library.
+<P>
+
+The <B>nofilter</B> and <B>use_tioctl</B> routines are specific to ncurses.
+They were not supported on Version 7, BSD or System V implementations.
+It is recommended that any code depending on ncurses extensions
+be conditioned using NCURSES_VERSION.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>legacy_coding</B>(3NCURSES),
+<B>ncurses</B>(3NCURSES),
+<B>initscr</B>(3NCURSES),
+<B>kernel</B>(3NCURSES),
+<B>scr_dump</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES),
+<B>legacy_coding</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">PORTABILITY</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

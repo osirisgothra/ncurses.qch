@@ -1,0 +1,122 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of getyx</TITLE>
+</HEAD><BODY>
+<H1>getyx</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>getyx</B>,
+<B>getparyx</B>,
+<B>getbegyx</B>,
+<B>getmaxyx</B> - get <B>curses</B> cursor and window coordinates
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>void getyx(WINDOW *win, int y, int x);</B>
+<BR>
+
+<B>void getparyx(WINDOW *win, int y, int x);</B>
+<BR>
+
+<B>void getbegyx(WINDOW *win, int y, int x);</B>
+<BR>
+
+<B>void getmaxyx(WINDOW *win, int y, int x);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The <B>getyx</B> macro places the current cursor position of the given window in
+the two integer variables <I>y</I> and <I>x</I>.
+<P>
+
+If <I>win</I> is a subwindow, the <B>getparyx</B> macro places the beginning
+coordinates of the subwindow relative to the parent window into two integer
+variables <I>y</I> and <I>x</I>.
+Otherwise, <B>-1</B> is placed into <I>y</I> and <I>x</I>.
+<P>
+
+Like <B>getyx</B>, the <B>getbegyx</B> and <B>getmaxyx</B> macros store
+the current beginning coordinates and size of the specified window.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+The return values of these macros are undefined (i.e.,
+they should not be used as the right-hand side of assignment statements).
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+All of these interfaces are macros.
+A &quot;<B>&amp;</B>&quot; is not necessary before the variables <I>y</I> and <I>x</I>.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+The
+<B>getyx</B>,
+<B>getparyx</B>,
+<B>getbegyx</B> and
+<B>getmaxyx</B>
+macros are described in the XSI Curses standard, Issue 4.
+<P>
+
+This implementation also provides functions
+<B>getbegx</B>,
+<B>getbegy</B>,
+<B>getcurx</B>,
+<B>getcury</B>,
+<B>getmaxx</B>,
+<B>getmaxy</B>,
+<B>getparx</B> and
+<B>getpary</B>
+for compatibility with older versions of curses.
+<P>
+
+Although X/Open Curses does not address this,
+many implementations provide members of the WINDOW structure
+containing values corresponding to these macros.
+For best portability, do not rely on using the data in WINDOW,
+since some implementations make WINDOW opaque (do not allow
+direct use of its members).
+<P>
+
+Besides the problem of opaque structures,
+the data stored in like-named members may not have like-values in
+different implementations.
+For example, the WINDOW._maxx and WINDOW._maxy values in ncurses
+have (at least since release 1.8.1) differed by one from some
+other implementations.
+The difference is hidden by means of the macro <B>getmaxyx</B>.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>legacy</B>(3NCURSES),
+<B>opaque</B>(3NCURSES)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

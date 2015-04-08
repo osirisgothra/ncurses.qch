@@ -1,0 +1,120 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of ins_wstr</TITLE>
+</HEAD><BODY>
+<H1>ins_wstr</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>ins_wstr</B>,
+<B>ins_nwstr</B>,
+<B>wins_wstr</B>,
+<B>wins_nwstr</B>,
+<B>mvins_wstr</B>,
+<B>mvins_nwstr</B>,
+<B>mvwins_wstr</B>,
+<B>mvwins_nwstr</B> - insert a wide-character string into a curses window
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<PRE>
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+
+<B>int ins_wstr(const wchar_t *</B><I>wstr);</I>
+<BR>
+<B>int ins_nwstr(const wchar_t *</B><I>wstr</I><B>, int </B><I>n</I><B>);</B>
+<BR>
+<B>int wins_wstr(WINDOW *</B><I>win</I><B>, const wchar_t *</B><I>wstr</I><B>);</B>
+<BR>
+<B>int wins_nwstr(WINDOW *</B><I>win</I><B>, const wchar_t *</B><I>wstr</I><B>, int </B><I>n</I><B>);</B>
+<BR>
+<B>int mvins_wstr(int </B><I>y</I><B>, int </B><I>x</I><B>, const wchar_t *</B><I>wstr</I><B>);</B>
+<BR>
+<B>int mvins_nwstr(int </B><I>y</I><B>, int </B><I>x</I><B>, const wchar_t *</B><I>wstr</I><B>, int </B><I>n</I><B>);</B>
+<BR>
+<B>int mvwins_wstr(WINDOW *</B><I>win</I><B>, int </B><I>y</I><B>, int </B><I>x</I><B>, const wchar_t *</B><I>wstr</I><B>);</B>
+<BR>
+<B>int mvwins_nwstr(WINDOW *</B><I>win</I><B>, int </B><I>y</I><B>, int </B><I>x</I><B>, const wchar_t *</B><I>wstr</I><B>, int </B><I>n</I><B>);</B>
+</PRE>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+These routines insert a <B>wchar_t</B> character string
+(as many characters as will fit on the line)
+before the character under the cursor.
+All characters to the right of the cursor are shifted right,
+with the possibility of the rightmost characters on the line being lost.
+No wrapping is performed.
+The cursor position does not change
+(after moving to <I>y</I>, <I>x</I>, if specified).
+The four routines with <I>n</I> as the last argument
+insert a leading substring of at most <I>n</I> <B>wchar_t</B> characters.
+If <I>n</I> is less than 1, the entire string is inserted.
+<P>
+
+If a character in <I>wstr</I> is a tab, newline, carriage return or
+backspace, the cursor is moved appropriately within the window.
+A newline also does a <B>clrtoeol</B> before moving.
+Tabs are considered to be at every eighth column.
+If a character in <I>wstr</I> is another control character,
+it is drawn in the <B>^</B><I>X</I> notation.
+Calling <B>win_wch</B> after adding a control character
+(and moving to it, if necessary)
+does not return the control character,
+but instead returns a character in the ^-representation
+of the control character.
+<A NAME="lbAE">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that all but wins_nwstr may be macros.
+<P>
+
+If the first character in the string is a nonspacing character, these
+functions will fail.
+XSI does not define what will happen if a nonspacing character follows
+a control character.
+<A NAME="lbAF">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+Upon successful completion, these functions return OK.
+Otherwise, they return ERR.
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>insstr</B>(3NCURSES),
+<B>in_wch</B>(3NCURSES),
+<B>ins_wch</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">NOTES</A><DD>
+<DT><A HREF="#lbAF">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

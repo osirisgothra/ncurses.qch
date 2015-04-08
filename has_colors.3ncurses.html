@@ -1,0 +1,305 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of color</TITLE>
+</HEAD><BODY>
+<H1>color</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>start_color</B>,
+<B>init_pair</B>,
+<B>init_color</B>,
+<B>has_colors</B>,
+<B>can_change_color</B>,
+<B>color_content</B>,
+<B>pair_content</B>,
+<B>COLOR_PAIR</B> - <B>curses</B> color manipulation routines
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B># include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int start_color(void);</B>
+<BR>
+
+<B>int init_pair(short pair, short f, short b);</B>
+<BR>
+
+<B>int init_color(short color, short r, short g, short b);</B>
+<BR>
+
+<B>bool has_colors(void);</B>
+<BR>
+
+<B>bool can_change_color(void);</B>
+<BR>
+
+<B>int color_content(short color, short *r, short *g, short *b);</B>
+<BR>
+
+<B>int pair_content(short pair, short *f, short *b);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+<A NAME="lbAE">&nbsp;</A>
+<H3>Overview</H3>
+
+<B>curses</B> support color attributes on terminals with that capability.  To
+use these routines <B>start_color</B> must be called, usually right after
+<B>initscr</B>.  Colors are always used in pairs (referred to as color-pairs).
+A color-pair consists of a foreground color (for characters) and a background
+color (for the blank field on which the characters are displayed).  A
+programmer initializes a color-pair with the routine <B>init_pair</B>.  After it
+has been initialized, <B>COLOR_PAIR</B>(<I>n</I>), a macro defined in
+<B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>, can be used as a new video attribute.
+<P>
+
+If a terminal is capable of redefining colors, the programmer can use the
+routine <B>init_color</B> to change the definition of a color.  The routines
+<B>has_colors</B> and <B>can_change_color</B> return <B>TRUE</B> or <B>FALSE</B>,
+depending on whether the terminal has color capabilities and whether the
+programmer can change the colors.  The routine <B>color_content</B> allows a
+programmer to extract the amounts of red, green, and blue components in an
+initialized color.  The routine <B>pair_content</B> allows a programmer to find
+out how a given color-pair is currently defined.
+<A NAME="lbAF">&nbsp;</A>
+<H3>Routine Descriptions</H3>
+
+The <B>start_color</B> routine requires no arguments.  It must be
+called if the programmer wants to use colors, and before any other
+color manipulation routine is called.  It is good practice to call
+this routine right after <B>initscr</B>.  <B>start_color</B> initializes
+eight basic colors (black, red, green, yellow, blue, magenta, cyan,
+and white), and two global variables, <B>COLORS</B> and
+<B>COLOR_PAIRS</B> (respectively defining the maximum number of colors
+and color-pairs the terminal can support).  It also restores the
+colors on the terminal to the values they had when the terminal was
+just turned on.
+<P>
+
+The <B>init_pair</B> routine changes the definition of a color-pair.  It takes
+three arguments: the number of the color-pair to be changed, the foreground
+color number, and the background color number.
+For portable applications:
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+The value of the first argument
+must be between <B>1</B> and <B>COLOR_PAIRS-1</B>,
+except that if default colors are used (see <B>use_default_colors</B>)
+the upper limit is adjusted to allow for extra pairs which use
+a default color in foreground and/or background.
+
+<DT>&bull;<DD>
+
+The value of the second and
+third arguments must be between 0 and <B>COLORS</B>.
+Color pair 0 is assumed to be white on black,
+but is actually whatever the terminal implements before color is initialized.
+It cannot be modified by the application.
+</DL>
+<P>
+
+If the color-pair was previously
+initialized, the screen is refreshed and all occurrences of that color-pair
+are changed to the new definition.
+<P>
+
+As an extension, ncurses allows you to set color pair 0 via
+the <B>assume_default_colors</B> routine, or to specify the use of
+default colors (color number <B>-1</B>) if you first invoke the
+<B>use_default_colors</B> routine.
+<P>
+
+The <B>init_color</B> routine changes the definition of a color.  It takes four
+arguments: the number of the color to be changed followed by three RGB values
+(for the amounts of red, green, and blue components).  The value of the first
+argument must be between <B>0</B> and <B>COLORS</B>.  (See the section
+<B>Colors</B> for the default color index.)  Each of the last three arguments
+must be a value between 0 and 1000.  When <B>init_color</B> is used, all
+occurrences of that color on the screen immediately change to the new
+definition.
+<P>
+
+The <B>has_colors</B> routine requires no arguments.  It returns <B>TRUE</B> if
+the terminal can manipulate colors; otherwise, it returns <B>FALSE</B>.  This
+routine facilitates writing terminal-independent programs.  For example, a
+programmer can use it to decide whether to use color or some other video
+attribute.
+<P>
+
+The <B>can_change_color</B> routine requires no arguments.  It returns
+<B>TRUE</B> if the terminal supports colors and can change their definitions;
+other, it returns <B>FALSE</B>.  This routine facilitates writing
+terminal-independent programs.
+<P>
+
+The <B>color_content</B> routine gives programmers a way to find the intensity
+of the red, green, and blue (RGB) components in a color.  It requires four
+arguments: the color number, and three addresses of <B>short</B>s for storing
+the information about the amounts of red, green, and blue components in the
+given color.  The value of the first argument must be between 0 and
+<B>COLORS</B>.  The values that are stored at the addresses pointed to by the
+last three arguments are between 0 (no component) and 1000 (maximum amount of
+component).
+<P>
+
+The <B>pair_content</B> routine allows programmers to find out what colors a
+given color-pair consists of.  It requires three arguments: the color-pair
+number, and two addresses of <B>short</B>s for storing the foreground and the
+background color numbers.  The value of the first argument must be between 1
+and <B>COLOR_PAIRS-1</B>.  The values that are stored at the addresses pointed
+to by the second and third arguments are between 0 and <B>COLORS</B>.
+<A NAME="lbAG">&nbsp;</A>
+<H3>Colors</H3>
+
+In <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B> the following macros are defined.  These are the default
+colors.  <B>curses</B> also assumes that <B>COLOR_BLACK</B> is the default
+background color for all terminals.
+<P>
+
+<PRE>
+      <B>COLOR_BLACK</B>
+      <B>COLOR_RED</B>
+      <B>COLOR_GREEN</B>
+      <B>COLOR_YELLOW</B>
+      <B>COLOR_BLUE</B>
+      <B>COLOR_MAGENTA</B>
+      <B>COLOR_CYAN</B>
+      <B>COLOR_WHITE</B>
+</PRE>
+
+<A NAME="lbAH">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+The routines <B>can_change_color()</B> and <B>has_colors()</B> return <B>TRUE</B>
+or <B>FALSE</B>.
+<P>
+
+All other routines return the integer <B>ERR</B> upon failure and an <B>OK</B>
+(SVr4 specifies only &quot;an integer value other than <B>ERR</B>&quot;) upon successful
+completion.
+<P>
+
+X/Open defines no error conditions.
+This implementation will return <B>ERR</B> on attempts to
+use color values outside the range 0 to COLORS-1
+(except for the default colors extension),
+or use color pairs outside the range 0 to COLOR_PAIRS-1.
+Color values used in <B>init_color</B> must be in the range 0 to 1000.
+An error is returned from all functions
+if the terminal has not been initialized.
+An error is returned from secondary functions such as <B>init_pair</B>
+if <B>start_color</B> was not called.
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>init_color</B><DD>
+returns an error if the terminal does not support
+this feature, e.g., if the <I>initialize_color</I> capability is absent
+from the terminal description.
+<DT><B>start_color</B><DD>
+returns an error if the color table cannot be allocated.
+</DL>
+</DL>
+
+<A NAME="lbAI">&nbsp;</A>
+<H2>NOTES</H2>
+
+In the <I>ncurses</I> implementation, there is a separate color activation flag,
+color palette, color pairs table, and associated COLORS and COLOR_PAIRS counts
+for each screen; the <B>start_color</B> function only affects the current
+screen.  The SVr4/XSI interface is not really designed with this in mind, and
+historical implementations may use a single shared color palette.
+<P>
+
+Note that setting an implicit background color via a color pair affects only
+character cells that a character write operation explicitly touches.  To change
+the background color used when parts of a window are blanked by erasing or
+scrolling operations, see <B>bkgd</B>(3NCURSES).
+<P>
+
+Several caveats apply on 386 and 486 machines with VGA-compatible graphics:
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+COLOR_YELLOW is actually brown.  To get yellow, use COLOR_YELLOW combined with
+the <B>A_BOLD</B> attribute.
+
+<DT>&bull;<DD>
+
+The A_BLINK attribute should in theory cause the background to go bright.  This
+often fails to work, and even some cards for which it mostly works (such as the
+Paradise and compatibles) do the wrong thing when you try to set a bright
+&quot;yellow&quot; background (you get a blinking yellow foreground instead).
+
+<DT>&bull;<DD>
+
+Color RGB values are not settable.
+</DL>
+<A NAME="lbAJ">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+This implementation satisfies XSI Curses's minimum maximums
+for <B>COLORS</B> and <B>COLOR_PAIRS</B>.
+<P>
+
+The <B>init_pair</B> routine accepts negative values of foreground
+and background color to support the <B>use_default_colors</B> extension,
+but only if that routine has been first invoked.
+<P>
+
+The assumption that <B>COLOR_BLACK</B> is the default
+background color for all terminals can be modified using the
+<B>assume_default_colors</B> extension.
+<P>
+
+This implementation checks the pointers,
+e.g., for the values returned by
+<B>color_content</B> and <B>pair_content</B>,
+and will treat those as optional parameters when null.
+<A NAME="lbAK">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>initscr</B>(3NCURSES),
+<B>attr</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES),
+<B>default_colors</B>(3NCURSES)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DL>
+<DT><A HREF="#lbAE">Overview</A><DD>
+<DT><A HREF="#lbAF">Routine Descriptions</A><DD>
+<DT><A HREF="#lbAG">Colors</A><DD>
+</DL>
+<DT><A HREF="#lbAH">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAI">NOTES</A><DD>
+<DT><A HREF="#lbAJ">PORTABILITY</A><DD>
+<DT><A HREF="#lbAK">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

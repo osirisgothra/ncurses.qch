@@ -1,0 +1,372 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of attr</TITLE>
+</HEAD><BODY>
+<H1>attr</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>attroff</B>,
+<B>wattroff</B>,
+<B>attron</B>,
+<B>wattron</B>,
+<B>attrset</B>,
+<B>wattrset</B>,
+<B>color_set</B>,
+<B>wcolor_set</B>,
+<B>standend</B>,
+<B>wstandend</B>,
+<B>standout</B>,
+<B>wstandout</B>,
+<B>attr_get</B>,
+<B>wattr_get</B>,
+<B>attr_off</B>,
+<B>wattr_off</B>,
+<B>attr_on</B>,
+<B>wattr_on</B>,
+<B>attr_set</B>,
+<B>wattr_set</B>,
+<B>chgat</B>,
+<B>wchgat</B>,
+<B>mvchgat</B>,
+<B>mvwchgat</B>,
+<B>PAIR_NUMBER</B> - <B>curses</B> character and window attribute control routines
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<BR>
+
+<B>int attroff(int attrs);</B>
+<BR>
+
+<B>int wattroff(WINDOW *win, int attrs);</B>
+<BR>
+
+<B>int attron(int attrs);</B>
+<BR>
+
+<B>int wattron(WINDOW *win, int attrs);</B>
+<BR>
+
+<B>int attrset(int attrs);</B>
+<BR>
+
+<B>int wattrset(WINDOW *win, int attrs);</B>
+<BR>
+
+<B>int color_set(short color_pair_number, void* opts);</B>
+<BR>
+
+<B>int wcolor_set(WINDOW *win, short color_pair_number,</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>void*&nbsp;opts);</B>
+<BR>
+
+<B>int standend(void);</B>
+<BR>
+
+<B>int wstandend(WINDOW *win);</B>
+<BR>
+
+<B>int standout(void);</B>
+<BR>
+
+<B>int wstandout(WINDOW *win);</B>
+<BR>
+
+<B>int attr_get(attr_t *attrs, short *pair, void *opts);</B>
+<BR>
+
+<B>int wattr_get(WINDOW *win, attr_t *attrs, short *pair,</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>void&nbsp;*opts);</B>
+<BR>
+
+<B>int attr_off(attr_t attrs, void *opts);</B>
+<BR>
+
+<B>int wattr_off(WINDOW *win, attr_t attrs, void *opts);</B>
+<BR>
+
+<B>int attr_on(attr_t attrs, void *opts);</B>
+<BR>
+
+<B>int wattr_on(WINDOW *win, attr_t attrs, void *opts);</B>
+<BR>
+
+<B>int attr_set(attr_t attrs, short pair, void *opts);</B>
+<BR>
+
+<B>int wattr_set(WINDOW *win, attr_t attrs, short pair, void *opts);</B>
+<BR>
+
+<B>int chgat(int n, attr_t attr, short color,</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>const&nbsp;void&nbsp;*opts)</B>
+<BR>
+
+<B>int wchgat(WINDOW *win, int n, attr_t attr,</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>short&nbsp;color,&nbsp;const&nbsp;void&nbsp;*opts)</B>
+<BR>
+
+<B>int mvchgat(int y, int x, int n, attr_t attr,</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>short&nbsp;color,&nbsp;const&nbsp;void&nbsp;*opts)</B>
+<BR>
+
+<B>int mvwchgat(WINDOW *win, int y, int x, int n,</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>attr_t&nbsp;attr,&nbsp;short&nbsp;color,&nbsp;const&nbsp;void&nbsp;*opts)</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+These routines manipulate the current attributes of the named window.  The
+current attributes of a window apply to all characters that are written into
+the window with <B>waddch</B>, <B>waddstr</B> and <B>wprintw</B>.  Attributes are
+a property of the character, and move with the character through any scrolling
+and insert/delete line/character operations.  To the extent possible, they are
+displayed as appropriate modifications to the graphic rendition of characters
+put on the screen.
+<P>
+
+The routine <B>attrset</B> sets the current attributes of the given window to
+<I>attrs</I>.  The routine <B>attroff</B> turns off the named attributes without
+turning any other attributes on or off.  The routine <B>attron</B> turns on the
+named attributes without affecting any others.  The routine <B>standout</B> is
+the same as <B>attron(A_STANDOUT)</B>.  The routine <B>standend</B> is the same
+as <B>attrset(A_NORMAL)</B> or <B>attrset(0)</B>, that is, it turns off all
+attributes.
+<P>
+
+The <B>attrset</B> and related routines do not affect the attributes used
+when erasing portions of the window.
+See <B>bkgd</B>(3NCURSES) for functions which modify the attributes used for
+erasing and clearing.
+<P>
+
+The routine <B>color_set</B> sets the current color of the given window to the
+foreground/background combination described by the color_pair_number. The
+parameter opts is reserved for future use, applications must supply a null
+pointer.
+<P>
+
+The routine <B>wattr_get</B> returns the current attribute and color pair for
+the given window; <B>attr_get</B> returns the current attribute and color pair
+for <B>stdscr</B>.
+The remaining <B>attr_</B>* functions operate exactly like the corresponding
+<B>attr</B>* functions, except that they take arguments of type <B>attr_t</B>
+rather than <B>int</B>.
+<P>
+
+The routine <B>chgat</B> changes the attributes of a given number of characters
+starting at the current cursor location of <B>stdscr</B>.  It does not update
+the cursor and does not perform wrapping.  A character count of -1 or greater
+than the remaining window width means to change attributes all the way to the
+end of the current line.  The <B>wchgat</B> function generalizes this to any
+window; the <B>mvwchgat</B> function does a cursor move before acting.  In these
+functions, the color argument is a color-pair index (as in the first argument
+of <I>init_pair</I>, see <B>color</B>(3NCURSES)).  The <B>opts</B> argument is not
+presently used, but is reserved for the future (leave it <B>NULL</B>).
+<A NAME="lbAE">&nbsp;</A>
+<H3>Attributes</H3>
+
+The following video attributes, defined in <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>, can be passed to
+the routines <B>attron</B>, <B>attroff</B>, and <B>attrset</B>, or OR'd with the
+characters passed to <B>addch</B>.
+<P>
+
+<DL COMPACT><DT><DD>
+<TABLE>
+<TR VALIGN=top><TD><I>Name</I></TD><TD><I>Description</I><BR></TD></TR>
+<TR VALIGN=top><TD><HR></TD><TD><HR></TD><TD><HR></TD></TR>
+<TR VALIGN=top><TD><B>A_STANDOUT</B></TD><TD>Best highlighting mode of the terminal.<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_UNDERLINE</B></TD><TD>Underlining<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_REVERSE</B></TD><TD>Reverse video<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_BLINK</B></TD><TD>Blinking<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_DIM</B></TD><TD>Half bright<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_BOLD</B></TD><TD>Extra bright or bold<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_PROTECT</B></TD><TD>Protected mode<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_INVIS</B></TD><TD>Invisible or blank mode<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_ALTCHARSET</B></TD><TD>Alternate character set<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_ITALIC</B></TD><TD>Italics (non-X/Open extension)<BR></TD></TR>
+<TR VALIGN=top><TD><B>A_CHARTEXT</B></TD><TD>Bit-mask to extract a character<BR></TD></TR>
+<TR VALIGN=top><TD><B>COLOR_PAIR(</B><I>n</I><B>)</B></TD><TD>Color-pair number <I>n</I><BR></TD></TR>
+</TABLE>
+
+</DL>
+
+<P>
+
+These video attributes are supported by <B>attr_on</B> and related functions
+(which also support the attributes recognized by <B>attron</B>, etc.):
+<DL COMPACT><DT><DD>
+<TABLE>
+<TR VALIGN=top><TD><I>Name</I></TD><TD><I>Description</I><BR></TD></TR>
+<TR VALIGN=top><TD><HR></TD><TD><HR></TD><TD><HR></TD></TR>
+<TR VALIGN=top><TD><B>WA_LEFT</B></TD><TD>Left highlight<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_LOW</B></TD><TD>Low highlight<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_RIGHT</B></TD><TD>Right highlight<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_TOP</B></TD><TD>Top highlight<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_VERTICAL</B></TD><TD>Vertical highlight<BR></TD></TR>
+</TABLE>
+
+</DL>
+
+<P>
+
+For consistency
+<P>
+
+The following macro is the reverse of <B>COLOR_PAIR(</B><I>n</I><B>)</B>:
+<P>
+
+<BR>
+
+<B>PAIR_NUMBER(</B><I>attrs</I>) Returns the pair number associated
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;the&nbsp;<B>COLOR_PAIR(</B><I>n</I><B>)</B>&nbsp;attribute.
+<BR>
+
+<P>
+
+The return values of many of these routines are not meaningful (they are
+implemented as macro-expanded assignments and simply return their argument).
+The SVr4 manual page claims (falsely) that these routines always return <B>1</B>.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that <B>attroff</B>, <B>wattroff</B>, <B>attron</B>, <B>wattron</B>,
+<B>attrset</B>, <B>wattrset</B>, <B>standend</B> and <B>standout</B> may be macros.
+<P>
+
+<B>COLOR_PAIR</B> values can only be OR'd with attributes if the pair
+number is less than 256.
+The alternate functions such as <B>color_set</B> can pass a color pair
+value directly.
+However, ncurses ABI 4 and 5 simply OR this value within the alternate functions.
+You must use ncurses ABI 6 to support more than 256 color pairs.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are supported in the XSI Curses standard, Issue 4.  The
+standard defined the dedicated type for highlights, <B>attr_t</B>, which is not
+defined in SVr4 curses. The functions taking <B>attr_t</B> arguments are
+not supported under SVr4.
+<P>
+
+The XSI Curses standard states that whether the traditional functions
+<B>attron</B>/<B>attroff</B>/<B>attrset</B> can manipulate attributes other than
+<B>A_BLINK</B>, <B>A_BOLD</B>, <B>A_DIM</B>, <B>A_REVERSE</B>, <B>A_STANDOUT</B>, or
+<B>A_UNDERLINE</B> is &quot;unspecified&quot;.  Under this implementation as well as
+SVr4 curses, these functions correctly manipulate all other highlights
+(specifically, <B>A_ALTCHARSET</B>, <B>A_PROTECT</B>, and <B>A_INVIS</B>).
+<P>
+
+This implementation provides the <B>A_ITALIC</B> attribute for terminals
+which have the <I>enter_italics_mode</I> (sitm) and <I>exit_italics_mode</I> (ritm) capabilities.
+Italics are not mentioned in X/Open Curses.
+Unlike the other video attributes, <B>I_ITALIC</B> is unrelated
+to the <I>set_attributes</I> capabilities.
+This implementation makes the assumption that
+<I>exit_attribute_mode</I> may also reset italics.
+<P>
+
+XSI Curses added the new entry points, <B>attr_get</B>, <B>attr_on</B>,
+<B>attr_off</B>, <B>attr_set</B>, <B>wattr_on</B>, <B>wattr_off</B>,
+<B>wattr_get</B>, <B>wattr_set</B>.  These are intended to work with
+a new series of highlight macros prefixed with <B>WA_</B>.
+The older macros have direct counterparts in the newer set of names:
+<P>
+
+<DL COMPACT><DT><DD>
+
+<TABLE>
+<TR VALIGN=top><TD><I>Name</I></TD><TD><I>Description</I><BR></TD></TR>
+<TR VALIGN=top><TD><HR></TD><TD><HR></TD><TD><HR></TD></TR>
+<TR VALIGN=top><TD><B>WA_STANDOUT</B></TD><TD>Best highlighting mode of the terminal.<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_UNDERLINE</B></TD><TD>Underlining<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_REVERSE</B></TD><TD>Reverse video<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_BLINK</B></TD><TD>Blinking<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_DIM</B></TD><TD>Half bright<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_BOLD</B></TD><TD>Extra bright or bold<BR></TD></TR>
+<TR VALIGN=top><TD><B>WA_ALTCHARSET</B></TD><TD>Alternate character set<BR></TD></TR>
+</TABLE>
+
+</DL>
+
+<P>
+
+Older versions of this library did not force an update of the screen
+when changing the attributes.
+Use <B>touchwin</B> to force the screen to match the updated attributes.
+<P>
+
+The XSI curses standard specifies that each pair of corresponding <B>A_</B>
+and <B>WA_</B>-using functions operates on the same current-highlight
+information.
+<P>
+
+The XSI standard extended conformance level adds new highlights
+<B>A_HORIZONTAL</B>, <B>A_LEFT</B>, <B>A_LOW</B>, <B>A_RIGHT</B>, <B>A_TOP</B>,
+<B>A_VERTICAL</B> (and corresponding <B>WA_</B> macros for each).
+As of August 2013,
+no known terminal provides these highlights
+(i.e., via the <B>sgr1</B> capability).
+<A NAME="lbAH">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+All routines return the integer <B>OK</B> on success, or <B>ERR</B> on failure.
+<P>
+
+X/Open does not define any error conditions.
+<P>
+
+This implementation returns an error
+if the window pointer is null.
+The <B>wcolor_set</B> function returns an error if the color pair parameter
+is outside the range 0..COLOR_PAIRS-1.
+This implementation also provides
+<B>getattrs</B>
+for compatibility with older versions of curses.
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAI">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>addch</B>(3NCURSES),
+<B>addstr</B>(3NCURSES),
+<B>bkgd</B>(3NCURSES),
+<B>printw</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DL>
+<DT><A HREF="#lbAE">Attributes</A><DD>
+</DL>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAI">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

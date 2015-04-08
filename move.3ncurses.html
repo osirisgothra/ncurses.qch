@@ -1,0 +1,79 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of move</TITLE>
+</HEAD><BODY>
+<H1>move</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>move</B>,
+<B>wmove</B> - move <B>curses</B> window cursor
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int move(int y, int x);</B>
+<BR>
+
+<B>int wmove(WINDOW *win, int y, int x);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+These routines move the cursor associated with the window to line <I>y</I> and
+column <I>x</I>.  This routine does not move the physical cursor of the terminal
+until <B>refresh</B> is called.  The position specified is relative to the upper
+left-hand corner of the window, which is (0,0).
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+These routines return <B>ERR</B> upon failure and OK (SVr4
+specifies only &quot;an integer value other than <B>ERR</B>&quot;) upon successful
+completion.
+<P>
+
+Specifically, they return an error
+if the window pointer is null, or
+if the position is outside the window.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that <B>move</B> may be a macro.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are described in the XSI Curses standard, Issue 4.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES), <B>refresh</B>(3NCURSES)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

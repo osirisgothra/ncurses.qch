@@ -1,0 +1,370 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of sp_funcs</TITLE>
+</HEAD><BODY>
+<H1>sp_funcs</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+new_prescr - <B>curses</B> screen-pointer extension
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<PRE>
+
+<B>int assume_default_colors_sp(SCREEN*, int, int);</B>
+<BR>
+<B>int baudrate_sp(SCREEN*);</B>
+<BR>
+<B>int beep_sp(SCREEN*);</B>
+<BR>
+<B>bool can_change_color_sp(SCREEN*);</B>
+<BR>
+<B>int cbreak_sp(SCREEN*);</B>
+<BR>
+<B>int color_content_sp(SCREEN*, short, short*, short*, short*);</B>
+<BR>
+<B>int curs_set_sp(SCREEN*, int);</B>
+<BR>
+<B>int define_key_sp(SCREEN*, const char *, int);</B>
+<BR>
+<B>int def_prog_mode_sp(SCREEN*);</B>
+<BR>
+<B>int def_shell_mode_sp(SCREEN*);</B>
+<BR>
+<B>int delay_output_sp(SCREEN*, int);</B>
+<BR>
+<B>int doupdate_sp(SCREEN*);</B>
+<BR>
+<B>int echo_sp(SCREEN*);</B>
+<BR>
+<B>int endwin_sp(SCREEN*);</B>
+<BR>
+<B>int erasechar_sp(SCREEN*);</B>
+<BR>
+<B>int filter_sp(SCREEN*);</B>
+<BR>
+<B>int flash_sp(SCREEN*);</B>
+<BR>
+<B>int flushinp_sp(SCREEN*);</B>
+<BR>
+<B>int get_escdelay_sp(SCREEN*);</B>
+<BR>
+<B>int getmouse_sp(SCREEN*, MEVENT*);</B>
+<BR>
+<B>WINDOW* getwin_sp(SCREEN*, FILE*);</B>
+<BR>
+<B>int halfdelay_sp(SCREEN*);</B>
+<BR>
+<B>bool has_colors_sp(SCREEN*);</B>
+<BR>
+<B>bool has_ic_sp(SCREEN*);</B>
+<BR>
+<B>bool has_il_sp(SCREEN*);</B>
+<BR>
+<B>int has_key_sp(SCREEN*, int);</B>
+<BR>
+<B>bool has_mouse_sp(SCREEN*);</B>
+<BR>
+<B>int init_color_sp(SCREEN*, short, short, short, short);</B>
+<BR>
+<B>int init_pair_sp(SCREEN*, short, short, short);</B>
+<BR>
+<B>int intrflush_sp(SCREEN*, WINDOW*, bool);</B>
+<BR>
+<B>bool isendwin_sp(SCREEN*);</B>
+<BR>
+<B>bool is_term_resized_sp(SCREEN*, int, int);</B>
+<BR>
+<B>char* keybound_sp(SCREEN*, int, int);</B>
+<BR>
+<B>int key_defined_sp(SCREEN*, const char *);</B>
+<BR>
+<B>NCURSES_CONST char * keyname_sp(SCREEN*, int);</B>
+<BR>
+<B>int keyok_sp(SCREEN*, int, bool);</B>
+<BR>
+<B>char killchar_sp(SCREEN*);</B>
+<BR>
+<B>int mcprint_sp(SCREEN*, char *, int);</B>
+<BR>
+<B>int mouseinterval_sp(SCREEN*, int);</B>
+<BR>
+<B>mmask_t mousemask_sp(SCREEN*, mmask_t, mmask_t *);</B>
+<BR>
+<B>int mvcur_sp(SCREEN*, int, int, int, int);</B>
+<BR>
+<B>int napms_sp(SCREEN*, int);</B>
+<BR>
+<B>WINDOW* newpad_sp(SCREEN*, int, int);</B>
+<BR>
+<B>SCREEN* new_prescr(void);</B>
+<BR>
+<B>SCREEN* newterm_sp(SCREEN*, NCURSES_CONST char *, FILE *, FILE *);</B>
+<BR>
+<B>WINDOW* newwin_sp(SCREEN*, int, int, int, int);</B>
+<BR>
+<B>int nl_sp(SCREEN*);</B>
+<BR>
+<B>int nocbreak_sp(SCREEN*);</B>
+<BR>
+<B>int noecho_sp(SCREEN*);</B>
+<BR>
+<B>int nofilter_sp(SCREEN*);</B>
+<BR>
+<B>int nonl_sp(SCREEN*);</B>
+<BR>
+<B>void noqiflush_sp(SCREEN*);</B>
+<BR>
+<B>int noraw_sp(SCREEN*);</B>
+<BR>
+<B>int pair_content_sp(SCREEN*, short, short*, short*);</B>
+<BR>
+<B>void qiflush_sp(SCREEN*);</B>
+<BR>
+<B>int raw_sp(SCREEN*);</B>
+<BR>
+<B>int reset_prog_mode_sp(SCREEN*);</B>
+<BR>
+<B>int reset_shell_mode_sp(SCREEN*);</B>
+<BR>
+<B>int resetty_sp(SCREEN*);</B>
+<BR>
+<B>int resize_term_sp(SCREEN*, int, int);</B>
+<BR>
+<B>int resizeterm_sp(SCREEN*, int, int);</B>
+<BR>
+<B>int restartterm_sp(SCREEN*, NCURSES_CONST char*, int, int *);</B>
+<BR>
+<B>int ripoffline_sp(SCREEN*, int, int (*)(WINDOW*, int));</B>
+<BR>
+<B>int savetty_sp(SCREEN*);</B>
+<BR>
+<B>int scr_init_sp(SCREEN*, const char *);</B>
+<BR>
+<B>int scr_restore_sp(SCREEN*, const char *);</B>
+<BR>
+<B>int scr_set_sp(SCREEN*, const char *);</B>
+<BR>
+<B>TERMINAL* set_curterm_sp(SCREEN*, TERMINAL*);</B>
+<BR>
+<B>int set_escdelay_sp(SCREEN*, int);</B>
+<BR>
+<B>int set_tabsize_sp(SCREEN*, int);</B>
+<BR>
+<B>int slk_attroff_sp(SCREEN*, const chtype);</B>
+<BR>
+<B>int slk_attron_sp(SCREEN*, const chtype);</B>
+<BR>
+<B>int slk_attr_set_sp(SCREEN*, const attr_t, short, void*);</B>
+<BR>
+<B>int slk_attrset_sp(SCREEN*, const chtype);</B>
+<BR>
+<B>int slk_attr_sp(SCREEN*);</B>
+<BR>
+<B>int slk_clear_sp(SCREEN*);</B>
+<BR>
+<B>int slk_color_sp(SCREEN*, short);</B>
+<BR>
+<B>int slk_init_sp(SCREEN*, int);</B>
+<BR>
+<B>int slk_label_sp(SCREEN*, int);</B>
+<BR>
+<B>int slk_noutrefresh_sp(SCREEN*);</B>
+<BR>
+<B>int slk_refresh_sp(SCREEN*);</B>
+<BR>
+<B>int slk_restore_sp(SCREEN*);</B>
+<BR>
+<B>int slk_set_sp(SCREEN*, int, const char *, int);</B>
+<BR>
+<B>int slk_touch_sp(SCREEN*);</B>
+<BR>
+<B>int start_color_sp(SCREEN*);</B>
+<BR>
+<B>attr_t term_attrs_sp(SCREEN*);</B>
+<BR>
+<B>chtype termattrs_sp(SCREEN*);</B>
+<BR>
+<B>char* termname_sp(SCREEN*);</B>
+<BR>
+<B>int typeahead_sp(SCREEN*, int);</B>
+<BR>
+<B>NCURSES_CONST char* unctrl_sp(SCREEN*, chtype);</B>
+<BR>
+<B>int ungetch_sp(SCREEN*, int);</B>
+<BR>
+<B>int ungetmouse_sp(SCREEN*,MEVENT *);</B>
+<BR>
+<B>int unget_wch_sp(SCREEN*, const wchar_t);</B>
+<BR>
+<B>int use_default_colors_sp(SCREEN*);</B>
+<BR>
+<B>void use_env_sp(SCREEN*, bool);</B>
+<BR>
+<B>int use_legacy_coding_sp(SCREEN*, int);</B>
+<BR>
+<B>int vid_attr_sp(SCREEN*, attr_t, short, void *);</B>
+<BR>
+<B>int vidattr_sp(SCREEN*, chtype);</B>
+<BR>
+<B>int vid_puts_sp(SCREEN*, attr_t, short, void *, NCURSES_SP_OUTC);</B>
+<BR>
+<B>int vidputs_sp(SCREEN*, chtype, NCURSES_SP_OUTC);</B>
+<BR>
+<B>wchar_t* wunctrl_sp(SCREEN*, cchar_t *);</B>
+
+<B>#include &lt;<A HREF="file:///usr/include/form.h">form.h</A>&gt;</B>
+
+<B>int new_form_sp(SCREEN*, FIELD **);</B>
+
+<B>#include &lt;<A HREF="file:///usr/include/menu.h">menu.h</A>&gt;</B>
+
+<B>int new_menu_sp(SCREEN*, ITEM **);</B>
+
+<B>#include &lt;<A HREF="file:///usr/include/panel.h">panel.h</A>&gt;</B>
+
+<B>int ceiling_panel(SCREEN*);</B>
+<BR>
+<B>PANEL* ground_panel(SCREEN*);</B>
+<BR>
+<B>int update_panels_sp(SCREEN*);</B>
+
+<B>#include &lt;<A HREF="file:///usr/include/term.h">term.h</A>&gt;</B>
+
+<B>int del_curterm_sp(SCREEN*, TERMINAL *);</B>
+<BR>
+<B>int putp_sp(SCREEN*, const char *);</B>
+<BR>
+<B>int tgetflag_sp(SCREEN*, char *, const char *);</B>
+<BR>
+<B>int tgetent_sp(SCREEN*, char *, const char *);</B>
+<BR>
+<B>int tgetnum_sp(SCREEN*, NCURSES_CONST char *);</B>
+<BR>
+<B>char* tgetstr_sp(SCREEN*, NCURSES_CONST char *, char **);</B>
+<BR>
+<B>int tigetflag_sp(SCREEN*, NCURSES_CONST char *);</B>
+<BR>
+<B>int tigetnum_sp(SCREEN*, NCURSES_CONST char *);</B>
+<BR>
+<B>char* tigetstr_sp(SCREEN*, NCURSES_CONST char *);</B>
+<BR>
+<B>int tputs_sp(SCREEN*, const char *, int, NCURSES_SP_OUTC);</B>
+<BR>
+</PRE><A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+This implementation can be configured to provide a set of functions which
+improve the ability to manage multiple screens.
+This feature can be added to any of the configurations supported by ncurses;
+it adds new entrypoints
+without changing the meaning of any of the existing ones.
+<P>
+
+
+<A NAME="lbAE">&nbsp;</A>
+<H3>IMPROVED FUNCTIONS</H3>
+
+Most of the functions are new versions of existing functions.
+A parameter is added at the front of the parameter list.
+It is a SCREEN pointer.
+<P>
+
+The existing functions all use the current screen,
+which is a static variable.
+The extended functions use the specified screen,
+thereby reducing the number of variables which must be modified
+to update multiple screens.
+
+<A NAME="lbAF">&nbsp;</A>
+<H3>NEW FUNCTIONS</H3>
+
+Here are the new functions:
+<DL COMPACT>
+<DT>ceiling_panel<DD>
+this returns a pointer to the topmost panel in the given screen.
+<DT>ground_panel<DD>
+this returns a pointer to the lowest panel in the given screen.
+<DT>new_prescr<DD>
+when creating a new screen, the library uses static variables which
+have been preset, e.g., by <B><A HREF="/cgi-bin/man/man2html?3X+use_env">use_env</A></B>(3X), <B><A HREF="/cgi-bin/man/man2html?3X+filter">filter</A></B>(3X), etc.
+With the screen-pointer extension,
+there are situations where it must create a current screen before
+the unextended library does.
+The <B>new_prescr</B> function is used internally to handle these cases.
+It is also provided as an entrypoint to allow applications to customize
+the library initialization.
+
+</DL>
+<A NAME="lbAG">&nbsp;</A>
+<H2>NOTES</H2>
+
+This extension introduces some new names:
+<DL COMPACT>
+<DT>NCURSES_SP_FUNCS<DD>
+This is set to the library patch-level number.
+In the unextended library, this is zero (0),
+to make it useful for checking if the extension is provided.
+<DT>NCURSES_SP_NAME<DD>
+The new functions are named using the macro <I>NCURSES_SP_NAME</I>,
+which hides the actual implementation.
+Currently this adds a &quot;_sp&quot; suffix to the name of the unextended function.
+This manual page indexes the extensions showing the full name.
+However the proper usage of these functions uses the macro,
+to provide for the possibility of changing the naming convention
+for specific library configurations.
+<DT>NCURSES_SP_OUTC<DD>
+This is a new function-pointer type to use in the screen-pointer functions
+where an <I>NCURSES_OUTC</I> is used in the unextended library.
+<DT>NCURSES_OUTC<DD>
+This is a function-pointer type used for the cases where a function passes
+characters to the output stream, e.g., <B><A HREF="/cgi-bin/man/man2html?3X+vidputs">vidputs</A></B>(3X).
+</DL>
+<P>
+
+<A NAME="lbAH">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These routines are specific to ncurses.
+They were not supported on Version 7, BSD or System V implementations.
+It is recommended that any code depending on ncurses extensions
+be conditioned using <I>NCURSES_SP_FUNCS</I>.
+<A NAME="lbAI">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>opaque</B>(3NCURSES),
+<B>threads</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DL>
+<DT><A HREF="#lbAE">IMPROVED FUNCTIONS</A><DD>
+<DT><A HREF="#lbAF">NEW FUNCTIONS</A><DD>
+</DL>
+<DT><A HREF="#lbAG">NOTES</A><DD>
+<DT><A HREF="#lbAH">PORTABILITY</A><DD>
+<DT><A HREF="#lbAI">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:58 GMT, April 08, 2015
+</BODY>
+</HTML>

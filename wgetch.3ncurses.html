@@ -1,0 +1,393 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of getch</TITLE>
+</HEAD><BODY>
+<H1>getch</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>getch</B>,
+<B>wgetch</B>,
+<B>mvgetch</B>,
+<B>mvwgetch</B>,
+<B>ungetch</B>,
+<B>has_key</B> - get (or push back) characters from <B>curses</B> terminal keyboard
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+
+<B>int getch(void);</B>
+<BR>
+
+<B>int wgetch(WINDOW *win);</B>
+<BR>
+
+<B>int mvgetch(int y, int x);</B>
+<BR>
+
+<B>int mvwgetch(WINDOW *win, int y, int x);</B>
+<BR>
+
+<B>int ungetch(int ch);</B>
+<BR>
+
+<B>int has_key(int ch);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The <B>getch</B>, <B>wgetch</B>, <B>mvgetch</B> and <B>mvwgetch</B>, routines read
+a character from the window.
+In no-delay mode, if no input is waiting, the value <B>ERR</B> is returned.
+In delay mode, the program waits until the system
+passes text through to the program.
+Depending on the setting of <B>cbreak</B>,
+this is after one character (cbreak mode),
+or after the first newline (nocbreak mode).
+In half-delay mode,
+the program waits until a character is typed or the
+specified timeout has been reached.
+<P>
+
+Unless <B>noecho</B> has been set,
+then the character will also be echoed into the
+designated window according to the following rules:
+if the character is the current erase character, left arrow, or backspace,
+the cursor is moved one space to the left and that screen position is erased
+as if <B>delch</B> had been called.
+If the character value is any other <B>KEY_</B> define, the user is alerted
+with a <B>beep</B> call.
+Otherwise the character is simply output to the screen.
+<P>
+
+If the window is not a pad, and it has been moved or modified since the last
+call to <B>wrefresh</B>, <B>wrefresh</B> will be called before another character
+is read.
+<P>
+
+If <B>keypad</B> is <B>TRUE</B>, and a function key is pressed, the token for
+that function key is returned instead of the raw characters.
+Possible function
+keys are defined in <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B> as macros with values outside the range
+of 8-bit characters whose names begin with <B>KEY_</B>. Thus, a variable
+intended to hold the return value of a function key must be of short size or
+larger.
+<P>
+
+When a character that could be the beginning of a function key is received
+(which, on modern terminals, means an escape character),
+<B>curses</B> sets a timer.
+If the remainder of the sequence does not come in within the designated
+time, the character is passed through;
+otherwise, the function key value is returned.
+For this reason, many terminals experience a delay between the time
+a user presses the escape key and the escape is returned to the program.
+<P>
+
+The <B>ungetch</B> routine places <I>ch</I> back onto the input queue to be
+returned by the next call to <B>wgetch</B>.
+There is just one input queue for all windows.
+<P>
+
+<A NAME="lbAE">&nbsp;</A>
+<H3>Function Keys</H3>
+
+The following function keys, defined in <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>, might be returned by
+<B>getch</B> if <B>keypad</B> has been enabled.
+Note that not all of these are
+necessarily supported on any particular terminal.
+<P>
+<CENTER><TABLE>
+<TR VALIGN=top><TD><I>Name</I></TD><TD><I>Key</I> <I>name</I><BR></TD></TR>
+<TR VALIGN=top><TD>KEY_BREAK</TD><TD>Break key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_DOWN</TD><TD>The four arrow keys ...<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_UP</TD><TD><BR></TD></TR>
+<TR VALIGN=top><TD>KEY_LEFT</TD><TD><BR></TD></TR>
+<TR VALIGN=top><TD>KEY_RIGHT</TD><TD><BR></TD></TR>
+<TR VALIGN=top><TD>KEY_HOME</TD><TD>Home key (upward+left arrow)<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_BACKSPACE</TD><TD>Backspace<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_F0</TD><TD>
+Function keys; space for 64 keys is reserved.
+<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_F(<I>n</I>)</TD><TD>
+For 0 &le; <I>n</I> &le; 63
+<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_DL</TD><TD>Delete line<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_IL</TD><TD>Insert line<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_DC</TD><TD>Delete character<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_IC</TD><TD>Insert char or enter insert mode<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_EIC</TD><TD>Exit insert char mode<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_CLEAR</TD><TD>Clear screen<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_EOS</TD><TD>Clear to end of screen<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_EOL</TD><TD>Clear to end of line<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SF</TD><TD>Scroll 1 line forward<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SR</TD><TD>Scroll 1 line backward (reverse)<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_NPAGE</TD><TD>Next page<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_PPAGE</TD><TD>Previous page<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_STAB</TD><TD>Set tab<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_CTAB</TD><TD>Clear tab<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_CATAB</TD><TD>Clear all tabs<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_ENTER</TD><TD>Enter or send<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SRESET</TD><TD>Soft (partial) reset<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_RESET</TD><TD>Reset or hard reset<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_PRINT</TD><TD>Print or copy<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_LL</TD><TD>Home down or bottom (lower left)<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_A1</TD><TD>Upper left of keypad<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_A3</TD><TD>Upper right of keypad<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_B2</TD><TD>Center of keypad<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_C1</TD><TD>Lower left of keypad<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_C3</TD><TD>Lower right of keypad<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_BTAB</TD><TD>Back tab key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_BEG</TD><TD>Beg(inning) key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_CANCEL</TD><TD>Cancel key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_CLOSE</TD><TD>Close key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_COMMAND</TD><TD>Cmd (command) key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_COPY</TD><TD>Copy key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_CREATE</TD><TD>Create key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_END</TD><TD>End key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_EXIT</TD><TD>Exit key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_FIND</TD><TD>Find key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_HELP</TD><TD>Help key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_MARK</TD><TD>Mark key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_MESSAGE</TD><TD>Message key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_MOUSE</TD><TD>Mouse event read<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_MOVE</TD><TD>Move key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_NEXT</TD><TD>Next object key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_OPEN</TD><TD>Open key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_OPTIONS</TD><TD>Options key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_PREVIOUS</TD><TD>Previous object key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_REDO</TD><TD>Redo key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_REFERENCE</TD><TD>Ref(erence) key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_REFRESH</TD><TD>Refresh key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_REPLACE</TD><TD>Replace key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_RESIZE</TD><TD>Screen resized<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_RESTART</TD><TD>Restart key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_RESUME</TD><TD>Resume key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SAVE</TD><TD>Save key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SBEG</TD><TD>Shifted beginning key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SCANCEL</TD><TD>Shifted cancel key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SCOMMAND</TD><TD>Shifted command key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SCOPY</TD><TD>Shifted copy key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SCREATE</TD><TD>Shifted create key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SDC</TD><TD>Shifted delete char key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SDL</TD><TD>Shifted delete line key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SELECT</TD><TD>Select key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SEND</TD><TD>Shifted end key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SEOL</TD><TD>Shifted clear line key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SEXIT</TD><TD>Shifted exit key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SFIND</TD><TD>Shifted find key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SHELP</TD><TD>Shifted help key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SHOME</TD><TD>Shifted home key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SIC</TD><TD>Shifted input key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SLEFT</TD><TD>Shifted left arrow key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SMESSAGE</TD><TD>Shifted message key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SMOVE</TD><TD>Shifted move key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SNEXT</TD><TD>Shifted next key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SOPTIONS</TD><TD>Shifted options key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SPREVIOUS</TD><TD>Shifted prev key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SPRINT</TD><TD>Shifted print key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SREDO</TD><TD>Shifted redo key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SREPLACE</TD><TD>Shifted replace key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SRIGHT</TD><TD>Shifted right arrow<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SRSUME</TD><TD>Shifted resume key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SSAVE</TD><TD>Shifted save key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SSUSPEND</TD><TD>Shifted suspend key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SUNDO</TD><TD>Shifted undo key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_SUSPEND</TD><TD>Suspend key<BR></TD></TR>
+<TR VALIGN=top><TD>KEY_UNDO</TD><TD>Undo key<BR></TD></TR>
+</TABLE></CENTER>
+
+<P>
+
+Keypad is arranged like this:
+<P>
+<CENTER><TABLE BORDER>
+<TR VALIGN=top><TD ALIGN=center><B>A1</B></TD><TD ALIGN=center><B>up</B></TD><TD ALIGN=center><B>A3</B><BR></TD></TR>
+<TR VALIGN=top><TD ALIGN=center><B>left</B></TD><TD ALIGN=center><B>B2</B></TD><TD ALIGN=center><B>right</B><BR></TD></TR>
+<TR VALIGN=top><TD ALIGN=center><B>C1</B></TD><TD ALIGN=center><B>down</B></TD><TD ALIGN=center><B>C3</B><BR></TD></TR>
+</TABLE></CENTER>
+
+<P>
+The <B>has_key</B> routine takes a key value from the above list, and
+returns TRUE or FALSE according to whether
+the current terminal type recognizes a key with that value.
+Note that a few values do not correspond to a real key,
+e.g., <B>KEY_RESIZE</B> and <B>KEY_MOUSE</B>.
+See <B>resizeterm</B>(3NCURSES) for more details about <B>KEY_RESIZE</B>, and
+<B>mouse</B>(3NCURSES) for a discussion of <B>KEY_MOUSE</B>.
+<P>
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+All routines return the integer <B>ERR</B> upon failure and an integer value
+other than <B>ERR</B> (<B>OK</B> in the case of ungetch()) upon successful
+completion.
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>ungetch</B><DD>
+returns ERR
+if there is no more room in the FIFO.
+<DT><B>wgetch</B><DD>
+returns ERR
+if the window pointer is null, or
+if its timeout expires without having any data.
+</DL>
+</DL>
+
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAG">&nbsp;</A>
+<H2>NOTES</H2>
+
+Use of the escape key by a programmer for a single character function is
+discouraged, as it will cause a delay of up to one second while the
+keypad code looks for a following function-key sequence.
+<P>
+
+Note that some keys may be the same as commonly used control
+keys, e.g., <B>KEY_ENTER</B> versus control/M, <B>KEY_BACKSPACE</B> versus control/H.
+Some curses implementations may differ according to whether they
+treat these control keys specially (and ignore the terminfo), or
+use the terminfo definitions.
+<B>Ncurses</B> uses the terminfo definition.
+If it says that <B>KEY_ENTER</B> is control/M,
+<B>getch</B> will return <B>KEY_ENTER</B>
+when you press control/M.
+<P>
+
+Generally, <B>KEY_ENTER</B> denotes the character(s) sent by the <I>Enter</I>
+key on the numeric keypad:
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+the terminal description lists the most useful keys,
+
+<DT>&bull;<DD>
+
+the <I>Enter</I> key on the regular keyboard is already handled by
+the standard ASCII characters for carriage-return and line-feed,
+
+<DT>&bull;<DD>
+
+depending on whether <B>nl</B> or <B>nonl</B> was called,
+pressing &quot;Enter&quot; on the regular keyboard may return either a carriage-return
+or line-feed, and finally
+
+<DT>&bull;<DD>
+
+&quot;Enter or send&quot; is the standard description for this key.
+</DL>
+<P>
+
+When using <B>getch</B>, <B>wgetch</B>, <B>mvgetch</B>, or
+<B>mvwgetch</B>, nocbreak mode (<B>nocbreak</B>) and echo mode
+(<B>echo</B>) should not be used at the same time.
+Depending on the
+state of the tty driver when each character is typed, the program may
+produce undesirable results.
+<P>
+
+Note that <B>getch</B>, <B>mvgetch</B>, and <B>mvwgetch</B> may be macros.
+<P>
+
+Historically, the set of keypad macros was largely defined by the extremely
+function-key-rich keyboard of the AT&amp;T 7300, aka 3B1, aka Safari 4.
+Modern
+personal computers usually have only a small subset of these.
+IBM PC-style
+consoles typically support little more than <B>KEY_UP</B>, <B>KEY_DOWN</B>,
+<B>KEY_LEFT</B>, <B>KEY_RIGHT</B>, <B>KEY_HOME</B>, <B>KEY_END</B>,
+<B>KEY_NPAGE</B>, <B>KEY_PPAGE</B>, and function keys 1 through 12.
+The Ins key
+is usually mapped to <B>KEY_IC</B>.
+<A NAME="lbAH">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+The *get* functions are described in the XSI Curses standard, Issue 4.
+They
+read single-byte characters only.
+The standard specifies that they return
+<B>ERR</B> on failure, but specifies no error conditions.
+<P>
+
+The echo behavior of these functions on input of <B>KEY_</B> or backspace
+characters was not specified in the SVr4 documentation.
+This description is
+adopted from the XSI Curses standard.
+<P>
+
+The behavior of <B>getch</B> and friends in the presence of handled signals is
+unspecified in the SVr4 and XSI Curses documentation.
+Under historical curses
+implementations, it varied depending on whether the operating system's
+implementation of handled signal receipt interrupts a <B><A HREF="/cgi-bin/man/man2html?2+read">read</A></B>(2) call in
+progress or not, and also (in some implementations) depending on whether an
+input timeout or non-blocking mode has been set.
+<P>
+
+Programmers concerned about portability should be prepared for either of two
+cases: (a) signal receipt does not interrupt <B>getch</B>; (b) signal receipt
+interrupts <B>getch</B> and causes it to return ERR with <B>errno</B> set to
+<B>EINTR</B>.
+Under the <B>ncurses</B> implementation, handled signals never
+interrupt <B>getch</B>.
+<P>
+
+The <B>has_key</B> function is unique to <B>ncurses</B>.
+We recommend that
+any code using it be conditionalized on the <B>NCURSES_VERSION</B> feature macro.
+<A NAME="lbAI">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>inopts</B>(3NCURSES),
+<B>outopts</B>(3NCURSES),
+<B>mouse</B>(3NCURSES),
+<B>move</B>(3NCURSES),
+<B>refresh</B>(3NCURSES),
+<B>resizeterm</B>(3NCURSES).
+<P>
+
+Comparable functions in the wide-character (ncursesw) library are
+described in
+<B>get_wch</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DL>
+<DT><A HREF="#lbAE">Function Keys</A><DD>
+</DL>
+<DT><A HREF="#lbAF">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAG">NOTES</A><DD>
+<DT><A HREF="#lbAH">PORTABILITY</A><DD>
+<DT><A HREF="#lbAI">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:58 GMT, April 08, 2015
+</BODY>
+</HTML>

@@ -1,0 +1,112 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of resizeterm</TITLE>
+</HEAD><BODY>
+<H1>resizeterm</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>is_term_resized</B>,
+<B>resize_term</B>,
+<B>resizeterm</B> - change the curses terminal size
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>bool is_term_resized(int lines, int columns);</B>
+<BR>
+
+<B>int resize_term(int lines, int columns);</B>
+<BR>
+
+<B>int resizeterm(int lines, int columns);</B>
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+This is an extension to the curses library.
+It provides callers with a hook into the <B>ncurses</B> data to resize windows,
+primarily for use by programs running in an X Window terminal (e.g., xterm).
+The function <B>resizeterm</B> resizes the standard and current windows
+to the specified dimensions, and adjusts other bookkeeping data used by
+the <B>ncurses</B> library that record the window dimensions
+such as the <B>LINES</B> and <B>COLS</B> variables.
+<P>
+
+Most of the work is done by the inner function <B>resize_term</B>.
+The outer function <B>resizeterm</B> adds bookkeeping for the SIGWINCH handler.
+When resizing the windows,
+<B>resize_term</B> blank-fills the areas that are extended.
+The calling application should fill in these areas with appropriate data.
+The <B>resize_term</B> function attempts to resize all windows.
+However, due to the calling convention of pads,
+it is not possible to resize these
+without additional interaction with the application.
+<P>
+
+A support function <B>is_term_resized</B> is provided so that applications
+can check if the <B>resize_term</B> function would modify the window structures.
+It returns TRUE if the windows would be modified, and FALSE otherwise.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+Except as noted, these functions return
+the integer <B>ERR</B> upon failure and <B>OK</B> on success.
+They will fail if either of the dimensions are less than or equal to zero,
+or if an error occurs while (re)allocating memory for the windows.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+While these functions are intended to be used to support a signal handler
+(i.e., for SIGWINCH), care should be taken to avoid invoking them in a
+context where <B>malloc</B> or <B>realloc</B> may have been interrupted,
+since it uses those functions.
+<P>
+
+If ncurses is configured to supply its own SIGWINCH handler,
+the <B>resizeterm</B> function <B>ungetch</B>'s a <B>KEY_RESIZE</B> which
+will be read on the next call to <B>getch</B>.
+This is used to alert an application that the screen size has changed,
+and that it should repaint special features such as pads that cannot
+be done automatically.
+<P>
+
+If the environment variables <B>LINES</B> or <B>COLUMNS</B> are set,
+this overrides the library's use of the window size obtained from
+the operating system.
+Thus, even if a SIGWINCH is received,
+no screen size change may be recorded.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>getch</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES),
+<B>wresize</B>(3NCURSES).
+<A NAME="lbAH">&nbsp;</A>
+<H2>AUTHOR</H2>
+
+Thomas Dickey (from an equivalent function written in 1988 for BSD curses).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+<DT><A HREF="#lbAH">AUTHOR</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

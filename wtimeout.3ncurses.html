@@ -1,0 +1,335 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of inopts</TITLE>
+</HEAD><BODY>
+<H1>inopts</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>cbreak</B>,
+<B>nocbreak</B>,
+<B>echo</B>,
+<B>noecho</B>,
+<B>halfdelay</B>,
+<B>intrflush</B>,
+<B>keypad</B>,
+<B>meta</B>,
+<B>nodelay</B>,
+<B>notimeout</B>,
+<B>raw</B>,
+<B>noraw</B>,
+<B>noqiflush</B>,
+<B>qiflush</B>,
+<B>timeout</B>,
+<B>wtimeout</B>,
+<B>typeahead</B> - <B>curses</B> input options
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+
+<B>int cbreak(void);</B>
+<BR>
+
+<B>int nocbreak(void);</B>
+<BR>
+
+<B>int echo(void);</B>
+<BR>
+
+<B>int noecho(void);</B>
+<BR>
+
+<B>int halfdelay(int tenths);</B>
+<BR>
+
+<B>int intrflush(WINDOW *win, bool bf);</B>
+<BR>
+
+<B>int keypad(WINDOW *win, bool bf);</B>
+<BR>
+
+<B>int meta(WINDOW *win, bool bf);</B>
+<BR>
+
+<B>int nodelay(WINDOW *win, bool bf);</B>
+<BR>
+
+<B>int raw(void);</B>
+<BR>
+
+<B>int noraw(void);</B>
+<BR>
+
+<B>void noqiflush(void);</B>
+<BR>
+
+<B>void qiflush(void);</B>
+<BR>
+
+<B>int notimeout(WINDOW *win, bool bf);</B>
+<BR>
+
+<B>void timeout(int delay);</B>
+<BR>
+
+<B>void wtimeout(WINDOW *win, int delay);</B>
+<BR>
+
+<B>int typeahead(int fd);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+Normally, the tty driver buffers typed characters until a newline or carriage
+return is typed.  The <B>cbreak</B> routine disables line buffering and
+erase/kill character-processing (interrupt and flow control characters are
+unaffected), making characters typed by the user immediately available to the
+program.  The <B>nocbreak</B> routine returns the terminal to normal (cooked)
+mode.
+<P>
+
+Initially the terminal may or may not be in <B>cbreak</B> mode, as the mode is
+inherited; therefore, a program should call <B>cbreak</B> or <B>nocbreak</B>
+explicitly.  Most interactive programs using <B>curses</B> set the <B>cbreak</B>
+mode.  Note that <B>cbreak</B> overrides <B>raw</B>.
+[See <B>getch</B>(3NCURSES) for a
+discussion of how these routines interact with <B>echo</B> and <B>noecho</B>.]
+<P>
+
+The <B>echo</B> and <B>noecho</B> routines control whether characters typed by
+the user are echoed by <B>getch</B> as they are typed.  Echoing by the tty
+driver is always disabled, but initially <B>getch</B> is in echo mode, so
+characters typed are echoed.  Authors of most interactive programs prefer to do
+their own echoing in a controlled area of the screen, or not to echo at all, so
+they disable echoing by calling <B>noecho</B>.
+[See <B>getch</B>(3NCURSES) for a
+discussion of how these routines interact with <B>cbreak</B> and
+<B>nocbreak</B>.]
+<P>
+
+The <B>halfdelay</B> routine is used for half-delay mode, which is similar to
+<B>cbreak</B> mode in that characters typed by the user are immediately
+available to the program.  However, after blocking for <I>tenths</I> tenths of
+seconds, ERR is returned if nothing has been typed.  The value of <B>tenths</B>
+must be a number between 1 and 255.  Use <B>nocbreak</B> to leave half-delay
+mode.
+<P>
+
+If the <B>intrflush</B> option is enabled, (<I>bf</I> is <B>TRUE</B>), when an
+interrupt key is pressed on the keyboard (interrupt, break, quit) all output in
+the tty driver queue will be flushed, giving the effect of faster response to
+the interrupt, but causing <B>curses</B> to have the wrong idea of what is on
+the screen.  Disabling (<I>bf</I> is <B>FALSE</B>), the option prevents the
+flush.  The default for the option is inherited from the tty driver settings.
+The window argument is ignored.
+<P>
+
+The <B>keypad</B> option enables the keypad of the user's terminal.  If
+enabled (<I>bf</I> is <B>TRUE</B>), the user can press a function key
+(such as an arrow key) and <B>wgetch</B> returns a single value
+representing the function key, as in <B>KEY_LEFT</B>.  If disabled
+(<I>bf</I> is <B>FALSE</B>), <B>curses</B> does not treat function keys
+specially and the program has to interpret the escape sequences
+itself.  If the keypad in the terminal can be turned on (made to
+transmit) and off (made to work locally), turning on this option
+causes the terminal keypad to be turned on when <B>wgetch</B> is
+called.  The default value for keypad is false.
+<P>
+
+Initially, whether the terminal returns 7 or 8 significant bits on
+input depends on the control mode of the tty driver [see <A HREF="/cgi-bin/man/man2html?7+termio">termio</A>(7)].
+To force 8 bits to be returned, invoke <B>meta</B>(<I>win</I>,
+<B>TRUE</B>); this is equivalent, under POSIX, to setting the CS8 flag
+on the terminal.  To force 7 bits to be returned, invoke
+<B>meta</B>(<I>win</I>, <B>FALSE</B>); this is equivalent, under POSIX,
+to setting the CS7 flag on the terminal.  The window argument,
+<I>win</I>, is always ignored.  If the terminfo capabilities <B>smm</B>
+(meta_on) and <B>rmm</B> (meta_off) are defined for the terminal,
+<B>smm</B> is sent to the terminal when <B>meta</B>(<I>win</I>,
+<B>TRUE</B>) is called and <B>rmm</B> is sent when <B>meta</B>(<I>win</I>,
+<B>FALSE</B>) is called.
+<P>
+
+The <B>nodelay</B> option causes <B>getch</B> to be a non-blocking call.
+If no input is ready, <B>getch</B> returns <B>ERR</B>.  If disabled
+(<I>bf</I> is <B>FALSE</B>), <B>getch</B> waits until a key is pressed.
+<P>
+
+While interpreting an input escape sequence, <B>wgetch</B> sets a timer
+while waiting for the next character.  If <B>notimeout(</B><I>win</I>,
+<B>TRUE</B>) is called, then <B>wgetch</B> does not set a timer.  The
+purpose of the timeout is to differentiate between sequences received
+from a function key and those typed by a user.
+<P>
+
+The <B>raw</B> and <B>noraw</B> routines place the terminal into or out of raw
+mode.  Raw mode is similar to <B>cbreak</B> mode, in that characters typed are
+immediately passed through to the user program.  The differences are that in
+raw mode, the interrupt, quit, suspend, and flow control characters are all
+passed through uninterpreted, instead of generating a signal.  The behavior of
+the BREAK key depends on other bits in the tty driver that are not set by
+<B>curses</B>.
+<P>
+
+When the <B>noqiflush</B> routine is used, normal flush of input and
+output queues associated with the <B>INTR</B>, <B>QUIT</B> and
+<B>SUSP</B> characters will not be done [see <A HREF="/cgi-bin/man/man2html?7+termio">termio</A>(7)].  When
+<B>qiflush</B> is called, the queues will be flushed when these control
+characters are read.  You may want to call <B>noqiflush()</B> in a signal
+handler if you want output to continue as though the interrupt
+had not occurred, after the handler exits.
+<P>
+
+The <B>timeout</B> and <B>wtimeout</B> routines set blocking or
+non-blocking read for a given window.  If <I>delay</I> is negative,
+blocking read is used (i.e., waits indefinitely for
+input).  If <I>delay</I> is zero, then non-blocking read is used
+(i.e., read returns <B>ERR</B> if no input is waiting).  If
+<I>delay</I> is positive, then read blocks for <I>delay</I>
+milliseconds, and returns <B>ERR</B> if there is still no input.
+Hence, these routines provide the same functionality as <B>nodelay</B>,
+plus the additional capability of being able to block for only
+<I>delay</I> milliseconds (where <I>delay</I> is positive).
+<P>
+
+The <B>curses</B> library does ``line-breakout optimization''
+by looking for typeahead periodically while updating the screen.
+If input is found, and it is coming from a tty,
+the current update is postponed until
+<B>refresh</B> or <B>doupdate</B> is called again.
+This allows faster response to commands typed in advance.
+Normally, the input FILE
+pointer passed to <B>newterm</B>, or <B>stdin</B> in the case that
+<B>initscr</B> was used, will be used to do this typeahead checking.
+The <B>typeahead</B> routine specifies that the file descriptor
+<I>fd</I> is to be used to check for typeahead instead.  If <I>fd</I> is
+-1, then no typeahead checking is done.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+All routines that return an integer return <B>ERR</B> upon failure and OK (SVr4
+specifies only &quot;an integer value other than <B>ERR</B>&quot;) upon successful
+completion, unless otherwise noted in the preceding routine descriptions.
+<P>
+
+X/Open does not define any error conditions.
+In this implementation,
+functions with a window parameter will return an error if it is null.
+Any function will also return an error if the terminal was not initialized.
+Also,
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>halfdelay</B><DD>
+returns an error
+if its parameter is outside the range 1..255.
+</DL>
+</DL>
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are described in the XSI Curses standard, Issue 4.
+<P>
+
+The ncurses library obeys the XPG4 standard and the historical practice of the
+AT&amp;T curses implementations, in that the echo bit is cleared when curses
+initializes the terminal state.  BSD curses differed from this slightly; it
+left the echo bit on at initialization, but the BSD <B>raw</B> call turned it
+off as a side-effect.  For best portability, set echo or noecho explicitly
+just after initialization, even if your program remains in cooked mode.
+<P>
+
+When <B>keypad</B> is first enabled,
+ncurses loads the key-definitions for the current terminal description.
+If the terminal description includes extended string capabilities,
+e.g., from using the <B>-x</B> option of tic,
+then ncurses also defines keys for the capabilities whose names
+begin with &quot;k&quot;.
+The corresponding keycodes are generated and (depending on previous
+loads of terminal descriptions) may differ from one execution of a
+program to the next.
+The generated keycodes are recognized by the <B>keyname</B> function
+(which will then return a name beginning with &quot;k&quot; denoting the
+terminfo capability name rather than &quot;K&quot;, used for curses key-names).
+On the other hand, an application can use <B>define_key</B> to establish
+a specific keycode for a given string.
+This makes it possible for an application to check for an extended
+capability's presence with <I>tigetstr</I>,
+and reassign the keycode to match its own needs.
+<P>
+
+Low-level applications can use <B>tigetstr</B> to obtain the definition
+of any particular string capability.
+Higher-level applications which use the curses <B>wgetch</B>
+and similar functions to return keycodes rely upon the order in which
+the strings are loaded.
+If more than one key definition has the same string value,
+then <B>wgetch</B> can return only one keycode.
+Most curses implementations (including ncurses)
+load key definitions in the order
+defined by the array of string capability names.
+The last key to be loaded determines the keycode which will be returned.
+In ncurses, you may also have extended capabilities interpreted as
+key definitions.
+These are loaded after the predefined keys,
+and if a capability's value is the same as a previously-loaded
+key definition,
+the later definition is the one used.
+<A NAME="lbAG">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that <B>echo</B>, <B>noecho</B>, <B>halfdelay</B>, <B>intrflush</B>,
+<B>meta</B>, <B>nodelay</B>, <B>notimeout</B>, <B>noqiflush</B>,
+<B>qiflush</B>, <B>timeout</B>, and <B>wtimeout</B> may be macros.
+<P>
+
+The <B>noraw</B> and <B>nocbreak</B> calls follow historical practice in that
+they attempt to restore to normal (`cooked') mode from raw and cbreak modes
+respectively.  Mixing raw/noraw and cbreak/nocbreak calls leads to tty driver
+control states that are hard to predict or understand; it is not recommended.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>getch</B>(3NCURSES),
+<B>initscr</B>(3NCURSES),
+<B>util</B>(3NCURSES),
+<B>define_key</B>(3NCURSES),
+<B><A HREF="/cgi-bin/man/man2html?3+termios">termios</A></B>(3)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">PORTABILITY</A><DD>
+<DT><A HREF="#lbAG">NOTES</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:58 GMT, April 08, 2015
+</BODY>
+</HTML>

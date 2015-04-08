@@ -1,0 +1,642 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of threads</TITLE>
+</HEAD><BODY>
+<H1>threads</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>use_screen</B>,
+<B>use_window</B> - <B>curses</B> thread support
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>typedef int (*NCURSES_WINDOW_CB)(WINDOW *, void *);</B>
+<BR>
+
+<B>typedef int (*NCURSES_SCREEN_CB)(SCREEN *, void *);</B>
+<BR>
+
+<B>int get_escdelay(void);</B>
+<BR>
+
+<B>int set_escdelay(int size);</B>
+<BR>
+
+<B>int set_tabsize(int size);</B>
+<BR>
+
+<B>int use_screen(SCREEN *scr, NCURSES_SCREEN_CB func, void *data);</B>
+<BR>
+
+<B>int use_window(WINDOW *win, NCURSES_WINDOW_CB func, void *data);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+This implementation can be configured to provide rudimentary support
+for multi-threaded applications.
+This makes a different set of libraries, e.g., <I>libncursest</I> since
+the binary interfaces are different.
+<P>
+
+Rather than modify the interfaces to pass a thread specifier to
+each function, it adds a few functions which can be used in any
+configuration which hide the mutex's needed to prevent concurrent
+use of the global variables when configured for threading.
+<P>
+
+In addition to forcing access to members of the <B>WINDOW</B> structure
+to be via functions (see <B><A HREF="/cgi-bin/man/man2html?3x+curs_opaque">curs_opaque</A></B>(3x)),
+it makes functions of the common global variables,
+e.g.,
+COLORS,
+COLOR_PAIRS,
+COLS,
+ESCDELAY,
+LINES,
+TABSIZE
+curscr,
+newscr and
+ttytype.
+Those variables are maintained as read-only values, stored in the <B>SCREEN</B>
+structure.
+<P>
+
+Even this is not enough to make a thread-safe application using curses.
+A multi-threaded application would be expected to have threads updating
+separate windows (within the same device),
+or updating on separate screens (on different devices).
+Also, a few of the global variables are considered writable by some
+applications.
+The functions described here address these special situations.
+<P>
+
+The ESCDELAY and TABSIZE global variables are modified by some applications.
+To modify them in any configuration,
+use the <B>set_escdelay</B> or <B>set_tabsize</B> functions.
+Other global variables are not modifiable.
+<P>
+
+The <B>get_escdelay</B> function returns the value for ESCDELAY.
+<P>
+
+The <B>use_window</B> and <B>use_screen</B> functions provide coarse
+granularity mutexes for their respective <B>WINDOW</B> and <B>SCREEN</B>
+parameters, and call a user-supplied function,
+passing it a <I>data</I> parameter,
+and returning the value from the user-supplied function to the application.
+
+<A NAME="lbAE">&nbsp;</A>
+<H3>USAGE</H3>
+
+All of the ncurses library functions assume that the locale is not
+altered during operation.
+In addition,
+they use data which is maintained within a hierarchy of scopes.
+<DL COMPACT><DT><DD>
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+global data, e.g., used in the low-level terminfo or termcap interfaces.
+
+<DT>&bull;<DD>
+
+terminal data, e.g., associated with a call to <I>set_curterm</I>.
+The terminal data are initialized when screens are created.
+
+<DT>&bull;<DD>
+
+screen data, e.g., associated with a call to <I>newterm</I> or <I>initscr</I>.
+
+<DT>&bull;<DD>
+
+window data, e.g., associated with a call to <I>newwin</I> or <I>subwin</I>.
+Windows are associated with screens.
+Pads are not necessarily associated with a particular screen.
+<DT><DD>
+Most curses applications operate on one or more windows within a single screen.
+
+<DT>&bull;<DD>
+
+reentrant, i.e., it uses only the data passed as parameters.
+</DL>
+</DL>
+
+<P>
+
+This table lists the scope of data used for each symbol in the
+ncurses library when it is configured to support threading:
+<CENTER><TABLE>
+<TR VALIGN=top><TD>Symbol</TD><TD>Scope<BR></TD></TR>
+<TR VALIGN=top><TD COLSPAN=2><HR><HR></TD></TR>
+<TR VALIGN=top><TD>BC</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>COLORS</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>COLOR_PAIR</TD><TD>reentrant<BR></TD></TR>
+<TR VALIGN=top><TD>COLOR_PAIRS</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>COLS</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>ESCDELAY</TD><TD>screen (readonly, see <I>set_escdelay</I>)<BR></TD></TR>
+<TR VALIGN=top><TD>LINES</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>PAIR_NUMBER</TD><TD>reentrant<BR></TD></TR>
+<TR VALIGN=top><TD>PC</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>SP</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>TABSIZE</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>UP</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>acs_map</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>add_wch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>add_wchnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>add_wchstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>addch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>addchnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>addchstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>addnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>addnwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>addstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>addwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>assume_default_colors</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>attr_get</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>attr_off</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>attr_on</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>attr_set</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>attroff</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>attron</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>attrset</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>baudrate</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>beep</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>bkgd</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>bkgdset</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>bkgrnd</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>bkgrndset</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>boolcodes</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>boolfnames</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>boolnames</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>border</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>border_set</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>box</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>box_set</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>can_change_color</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>cbreak</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>chgat</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>clear</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>clearok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>clrtobot</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>clrtoeol</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>color_content</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>color_set</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>copywin</TD><TD>window locks(source, target)<BR></TD></TR>
+<TR VALIGN=top><TD>cur_term</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>curs_set</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>curscr</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>curses_version</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>def_prog_mode</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>def_shell_mode</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>define_key</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>del_curterm</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>delay_output</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>delch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>deleteln</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>delscreen</TD><TD>global locks(screenlist, screen)<BR></TD></TR>
+<TR VALIGN=top><TD>delwin</TD><TD>global locks(windowlist)<BR></TD></TR>
+<TR VALIGN=top><TD>derwin</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>doupdate</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>dupwin</TD><TD>screen locks(window)<BR></TD></TR>
+<TR VALIGN=top><TD>echo</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>echo_wchar</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>echochar</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>endwin</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>erase</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>erasechar</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>erasewchar</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>filter</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>flash</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>flushinp</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>get_wch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>get_wstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>getattrs</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getbegx</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getbegy</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getbkgd</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getbkgrnd</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getcchar</TD><TD>reentrant<BR></TD></TR>
+<TR VALIGN=top><TD>getch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>getcurx</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getcury</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getmaxx</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getmaxy</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getmouse</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>getn_wstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>getnstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>getparx</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getpary</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>getstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>getwin</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>halfdelay</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>has_colors</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>has_ic</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>has_il</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>has_key</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>hline</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>hline_set</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>idcok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>idlok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>immedok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>in_wch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>in_wchnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>in_wchstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>inch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>inchnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>inchstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>init_color</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>init_pair</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>initscr</TD><TD>global locks(screenlist)<BR></TD></TR>
+<TR VALIGN=top><TD>innstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>innwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>ins_nwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>ins_wch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>ins_wstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>insch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>insdelln</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>insertln</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>insnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>insstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>instr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>intrflush</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>inwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>is_cleared</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_idcok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_idlok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_immedok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_keypad</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_leaveok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_linetouched</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_nodelay</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_notimeout</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_scrollok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_syncok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>is_term_resized</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>is_wintouched</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>isendwin</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>key_defined</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>key_name</TD><TD>global (static data)<BR></TD></TR>
+<TR VALIGN=top><TD>keybound</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>keyname</TD><TD>global (static data)<BR></TD></TR>
+<TR VALIGN=top><TD>keyok</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>keypad</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>killchar</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>killwchar</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>leaveok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>longname</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>mcprint</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>meta</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>mouse_trafo</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mouseinterval</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>mousemask</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>move</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvadd_wch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvadd_wchnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvadd_wchstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddchnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddchstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddnwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvchgat</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvcur</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>mvdelch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvderwin</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvget_wch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvget_wstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvgetch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvgetn_wstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvgetnstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvgetstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvhline</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvhline_set</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvin_wch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvin_wchnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvin_wchstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinchnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinchstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinnwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvins_nwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvins_wch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvins_wstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinsch</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinsnstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinsstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinwstr</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvprintw</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvscanw</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>mvvline</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvvline_set</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwadd_wch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwadd_wchnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwadd_wchstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddchnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddchstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddnwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwchgat</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwdelch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwget_wch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwget_wstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwgetch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwgetn_wstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwgetnstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwgetstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwhline</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwhline_set</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwin</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwin_wch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwin_wchnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwin_wchstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinchnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinchstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinnwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwins_nwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwins_wch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwins_wstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinsch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinsnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinsstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwprintw</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwscanw</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>mvwvline</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>mvwvline_set</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>napms</TD><TD>reentrant<BR></TD></TR>
+<TR VALIGN=top><TD>newpad</TD><TD>global locks(windowlist)<BR></TD></TR>
+<TR VALIGN=top><TD>newscr</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>newterm</TD><TD>global locks(screenlist)<BR></TD></TR>
+<TR VALIGN=top><TD>newwin</TD><TD>global locks(windowlist)<BR></TD></TR>
+<TR VALIGN=top><TD>nl</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>nocbreak</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>nodelay</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>noecho</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>nofilter</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>nonl</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>noqiflush</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>noraw</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>notimeout</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>numcodes</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>numfnames</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>numnames</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>ospeed</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>overlay</TD><TD>window locks(source, target)<BR></TD></TR>
+<TR VALIGN=top><TD>overwrite</TD><TD>window locks(source, target)<BR></TD></TR>
+<TR VALIGN=top><TD>pair_content</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>pecho_wchar</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>pechochar</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>pnoutrefresh</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>prefresh</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>printw</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>putp</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>putwin</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>qiflush</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>raw</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>redrawwin</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>refresh</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>reset_prog_mode</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>reset_shell_mode</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>resetty</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>resize_term</TD><TD>screen locks(windowlist)<BR></TD></TR>
+<TR VALIGN=top><TD>resizeterm</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>restartterm</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>ripoffline</TD><TD>global (static data)<BR></TD></TR>
+<TR VALIGN=top><TD>savetty</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>scanw</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>scr_dump</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>scr_init</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>scr_restore</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>scr_set</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>scrl</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>scroll</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>scrollok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>set_curterm</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>set_escdelay</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>set_tabsize</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>set_term</TD><TD>global locks(screenlist, screen)<BR></TD></TR>
+<TR VALIGN=top><TD>setcchar</TD><TD>reentrant<BR></TD></TR>
+<TR VALIGN=top><TD>setscrreg</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>setupterm</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attr</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attr_off</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attr_on</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attr_set</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attroff</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attron</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attrset</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_clear</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_color</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_init</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_label</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_noutrefresh</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_refresh</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_restore</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_set</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_touch</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>slk_wset</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>standend</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>standout</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>start_color</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>stdscr</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>strcodes</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>strfnames</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>strnames</TD><TD>global (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>subpad</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>subwin</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>syncok</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>term_attrs</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>termattrs</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>termname</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>tgetent</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>tgetflag</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>tgetnum</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>tgetstr</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>tgoto</TD><TD>global<BR></TD></TR>
+<TR VALIGN=top><TD>tigetflag</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>tigetnum</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>tigetstr</TD><TD>terminal<BR></TD></TR>
+<TR VALIGN=top><TD>timeout</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>touchline</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>touchwin</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>tparm</TD><TD>global (static data)<BR></TD></TR>
+<TR VALIGN=top><TD>tputs</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>trace</TD><TD>global (static data)<BR></TD></TR>
+<TR VALIGN=top><TD>ttytype</TD><TD>screen (readonly)<BR></TD></TR>
+<TR VALIGN=top><TD>typeahead</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>unctrl</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>unget_wch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>ungetch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>ungetmouse</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>untouchwin</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>use_default_colors</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>use_env</TD><TD>global (static data)<BR></TD></TR>
+<TR VALIGN=top><TD>use_extended_names</TD><TD>global (static data)<BR></TD></TR>
+<TR VALIGN=top><TD>use_legacy_coding</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>use_screen</TD><TD>global locks(screenlist, screen)<BR></TD></TR>
+<TR VALIGN=top><TD>use_window</TD><TD>global locks(windowlist, window)<BR></TD></TR>
+<TR VALIGN=top><TD>vid_attr</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>vid_puts</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>vidattr</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>vidputs</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>vline</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>vline_set</TD><TD>window (stdscr)<BR></TD></TR>
+<TR VALIGN=top><TD>vw_printw</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>vw_scanw</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>vwprintw</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>vwscanw</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>wadd_wch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wadd_wchnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wadd_wchstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>waddch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>waddchnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>waddchstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>waddnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>waddnwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>waddstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>waddwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wattr_get</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wattr_off</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wattr_on</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wattr_set</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wattroff</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wattron</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wattrset</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wbkgd</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wbkgdset</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wbkgrnd</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wbkgrndset</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wborder</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wborder_set</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wchgat</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wclear</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wclrtobot</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wclrtoeol</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wcolor_set</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wcursyncup</TD><TD>screen (affects window plus parents)<BR></TD></TR>
+<TR VALIGN=top><TD>wdelch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wdeleteln</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wecho_wchar</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wechochar</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wenclose</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>werase</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wget_wch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>wget_wstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetbkgrnd</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wgetch</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetn_wstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetnstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetparent</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wgetscrreg</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wgetstr</TD><TD>screen (input-operation)<BR></TD></TR>
+<TR VALIGN=top><TD>whline</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>whline_set</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>win_wch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>win_wchnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>win_wchstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winchnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winchstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winnwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wins_nwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wins_wch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wins_wstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winsch</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winsdelln</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winsertln</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winsnstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winsstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>winwstr</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wmouse_trafo</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wmove</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wnoutrefresh</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>wprintw</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wredrawln</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wrefresh</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>wresize</TD><TD>window locks(windowlist)<BR></TD></TR>
+<TR VALIGN=top><TD>wscanw</TD><TD>screen<BR></TD></TR>
+<TR VALIGN=top><TD>wscrl</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wsetscrreg</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wstandend</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wstandout</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wsyncdown</TD><TD>screen (affects window plus parents)<BR></TD></TR>
+<TR VALIGN=top><TD>wsyncup</TD><TD>screen (affects window plus parents)<BR></TD></TR>
+<TR VALIGN=top><TD>wtimeout</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wtouchln</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wunctrl</TD><TD>global (static data)<BR></TD></TR>
+<TR VALIGN=top><TD>wvline</TD><TD>window<BR></TD></TR>
+<TR VALIGN=top><TD>wvline_set</TD><TD>window<BR></TD></TR>
+</TABLE></CENTER>
+
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+These functions all return TRUE or FALSE, except as noted.
+<A NAME="lbAG">&nbsp;</A>
+<H2>NOTES</H2>
+
+Both a macro and a function are provided for each name.
+<A NAME="lbAH">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These routines are specific to ncurses.
+They were not supported on Version 7, BSD or System V implementations.
+It is recommended that any code depending on ncurses extensions
+be conditioned using NCURSES_VERSION.
+<A NAME="lbAI">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>opaque</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DL>
+<DT><A HREF="#lbAE">USAGE</A><DD>
+</DL>
+<DT><A HREF="#lbAF">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAG">NOTES</A><DD>
+<DT><A HREF="#lbAH">PORTABILITY</A><DD>
+<DT><A HREF="#lbAI">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

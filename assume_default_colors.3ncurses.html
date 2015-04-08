@@ -1,0 +1,172 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of default_colors</TITLE>
+</HEAD><BODY>
+<H1>default_colors</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>use_default_colors</B>,
+<B>assume_default_colors</B> - use terminal's default colors
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int use_default_colors(void);</B>
+<BR>
+
+<B>int assume_default_colors(int fg, int bg);</B>
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The
+<I>use_default_colors()</I>
+
+and
+<I>assume_default_colors()</I>
+
+functions are extensions to the curses library.
+They are used with terminals that support ISO 6429 color, or equivalent.
+These terminals allow the application to reset color to an unspecified
+default value (e.g., with SGR 39 or SGR 49).
+<P>
+
+Applications that paint a colored background over the whole screen
+do not take advantage of SGR 39 and SGR 49.
+Some applications are designed to work with the default background,
+using colors only for text.
+For example, there are several implementations of the <B>ls</B> program
+which use colors to denote different file types or permissions.
+These &quot;color ls&quot; programs do not necessarily modify the background color,
+typically using only the <I>setaf</I> terminfo capability to set the
+foreground color.
+Full-screen applications that use default colors can achieve similar
+visual effects.
+<P>
+
+The first function,
+<I>use_default_colors()</I>
+
+tells the curses library to assign terminal default
+foreground/background colors to color number -1. So init_pair(x,COLOR_RED,-1)
+will initialize pair x as red on default background and init_pair(x,-1,COLOR_BLUE) will
+initialize pair x as default foreground on blue.
+<P>
+
+The other,
+<I>assume_default_colors()</I>
+
+is a refinement which tells which colors to paint for color pair 0.
+This function recognizes a special color number -1,
+which denotes the default terminal color.
+<P>
+
+The following are equivalent:
+<DL COMPACT><DT><DD>
+<BR>
+
+<I>use_default_colors();</I>
+
+<BR>
+
+<I>assume_default_colors(-1,-1);</I>
+
+</DL>
+
+<P>
+
+These are ncurses extensions.
+For other curses implementations, color
+number -1 does not mean anything, just as for ncurses before a
+successful call of <I>use_default_colors()</I> or <I>assume_default_colors()</I>.
+<P>
+
+Other curses implementations do not allow an application to modify color pair 0.
+They assume that the background is COLOR_BLACK,
+but do not ensure that the color pair 0 is painted to match the
+assumption.
+If your application does not use either
+<I>use_default_colors()</I>
+
+or
+<I>assume_default_colors()</I>
+
+ncurses will paint a white foreground (text) with black background
+for color pair 0.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+These functions return the integer <B>ERR</B> upon failure and <B>OK</B> on success.
+They will fail if either the terminal does not support
+the <I>orig_pair</I> or <I>orig_colors</I> capability.
+If the <I>initialize_pair</I> capability is not found, this causes an
+error as well.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Associated with this extension, the <B>init_pair</B> function accepts
+negative arguments to specify default foreground or background colors.
+<P>
+
+The <I>use_default_colors()</I> function was added to support <I>ded</I>.
+This is a full-screen application which uses curses to manage only part
+of the screen.  The bottom portion of the screen, which is of adjustable
+size, is left uncolored to display the results from shell commands.
+The top portion of the screen colors filenames using a scheme like the
+&quot;color ls&quot; programs.
+Attempting to manage the background color of the screen for this application
+would give unsatisfactory results for a variety of reasons.
+This extension was devised after
+noting that color xterm (and similar programs) provides a background color
+which does not necessarily correspond to any of the ANSI colors.
+While a special terminfo entry could be constructed using nine colors,
+there was no mechanism provided within curses to account for the related
+<I>orig_pair</I> and <I>back_color_erase</I> capabilities.
+<P>
+
+The <I>assume_default_colors()</I> function was added to solve
+a different problem: support for applications which would use
+environment variables and other configuration to bypass curses'
+notion of the terminal's default colors, setting specific values.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These routines are specific to ncurses.  They were not supported on
+Version 7, BSD or System V implementations.  It is recommended that
+any code depending on them be conditioned using NCURSES_VERSION.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>color</B>(3NCURSES),
+<B><A HREF="/cgi-bin/man/man2html?1+ded">ded</A></B>(1).
+<A NAME="lbAI">&nbsp;</A>
+<H2>AUTHOR</H2>
+
+Thomas Dickey (from an analysis of the requirements for color xterm
+for XFree86 3.1.2C, February 1996).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+<DT><A HREF="#lbAI">AUTHOR</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

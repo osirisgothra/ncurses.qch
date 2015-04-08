@@ -1,0 +1,363 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of mouse</TITLE>
+</HEAD><BODY>
+<H1>mouse</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>has_mouse</B>,
+<B>getmouse</B>, <B>ungetmouse</B>,
+<B>mousemask</B>, <B>wenclose</B>,
+<B>mouse_trafo</B>, <B>wmouse_trafo</B>,
+<B>mouseinterval</B> - mouse interface through curses
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+
+<B>typedef unsigned long mmask_t;</B>
+<P>
+
+<PRE>
+<B>typedef struct {</B>
+<B>    short id;         </B><I>/* ID to distinguish multiple devices */</I>
+<B>    int x, y, z;      </B><I>/* event coordinates */</I>
+<B>    mmask_t bstate;   </B><I>/* button state bits */</I>
+<B>} MEVENT;</B>
+</PRE>
+
+<P>
+
+<B>bool has_mouse(void);</B>
+<BR>
+
+<B>int getmouse(MEVENT *event);</B>
+<BR>
+
+<B>int ungetmouse(MEVENT *event);</B>
+<BR>
+
+<B>mmask_t mousemask(mmask_t newmask, mmask_t *oldmask);</B>
+<BR>
+
+<B>bool wenclose(const WINDOW *win, int y, int x);</B>
+<BR>
+
+<B>bool mouse_trafo(int* pY, int* pX, bool to_screen);</B>
+<BR>
+
+<B>bool wmouse_trafo(const WINDOW* win, int* pY, int* pX,</B>
+<BR>
+
+<TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TT><B>bool to_screen);</B><BR>
+<BR>
+
+<B>int mouseinterval(int erval);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+These functions provide an interface to mouse events from
+<B>ncurses</B>(3NCURSES).
+Mouse events are represented by <B>KEY_MOUSE</B>
+pseudo-key values in the <B>wgetch</B> input stream.
+<P>
+
+To make mouse events visible, use the <B>mousemask</B> function.
+This will set
+the mouse events to be reported.
+By default, no mouse events are reported.
+The function will return a mask to indicate which of the specified mouse events
+can be reported; on complete failure it returns 0.
+If oldmask is non-NULL,
+this function fills the indicated location with the previous value of the given
+window's mouse event mask.
+<P>
+
+As a side effect, setting a zero mousemask may turn off the mouse pointer;
+setting a nonzero mask may turn it on.
+Whether this happens is device-dependent.
+<P>
+
+Here are the mouse event type masks which may be defined:
+<P>
+
+<TABLE>
+<TR VALIGN=top><TD><I>Name</I></TD><TD><I>Description</I><BR></TD></TR>
+<TR VALIGN=top><TD><HR></TD><TD><HR></TD></TR>
+<TR VALIGN=top><TD>BUTTON1_RELEASED</TD><TD>mouse button 1 up<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON1_CLICKED</TD><TD>mouse button 1 clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON1_DOUBLE_CLICKED</TD><TD>mouse button 1 double clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON1_TRIPLE_CLICKED</TD><TD>mouse button 1 triple clicked<BR></TD></TR>
+<TR VALIGN=top><TD COLSPAN=2><HR></TD></TR>
+<TR VALIGN=top><TD>BUTTON2_PRESSED</TD><TD>mouse button 2 down<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON2_RELEASED</TD><TD>mouse button 2 up<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON2_CLICKED</TD><TD>mouse button 2 clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON2_DOUBLE_CLICKED</TD><TD>mouse button 2 double clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON2_TRIPLE_CLICKED</TD><TD>mouse button 2 triple clicked<BR></TD></TR>
+<TR VALIGN=top><TD COLSPAN=2><HR></TD></TR>
+<TR VALIGN=top><TD>BUTTON3_PRESSED</TD><TD>mouse button 3 down<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON3_RELEASED</TD><TD>mouse button 3 up<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON3_CLICKED</TD><TD>mouse button 3 clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON3_DOUBLE_CLICKED</TD><TD>mouse button 3 double clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON3_TRIPLE_CLICKED</TD><TD>mouse button 3 triple clicked<BR></TD></TR>
+<TR VALIGN=top><TD COLSPAN=2><HR></TD></TR>
+<TR VALIGN=top><TD>BUTTON4_PRESSED</TD><TD>mouse button 4 down<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON4_RELEASED</TD><TD>mouse button 4 up<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON4_CLICKED</TD><TD>mouse button 4 clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON4_DOUBLE_CLICKED</TD><TD>mouse button 4 double clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON4_TRIPLE_CLICKED</TD><TD>mouse button 4 triple clicked<BR></TD></TR>
+<TR VALIGN=top><TD COLSPAN=2><HR></TD></TR>
+<TR VALIGN=top><TD>BUTTON5_PRESSED</TD><TD>mouse button 5 down<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON5_RELEASED</TD><TD>mouse button 5 up<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON5_CLICKED</TD><TD>mouse button 5 clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON5_DOUBLE_CLICKED</TD><TD>mouse button 5 double clicked<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON5_TRIPLE_CLICKED</TD><TD>mouse button 5 triple clicked<BR></TD></TR>
+<TR VALIGN=top><TD COLSPAN=2><HR></TD></TR>
+<TR VALIGN=top><TD>BUTTON_SHIFT</TD><TD>shift was down during button state change<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON_CTRL</TD><TD>control was down during button state change<BR></TD></TR>
+<TR VALIGN=top><TD>BUTTON_ALT</TD><TD>alt was down during button state change<BR></TD></TR>
+<TR VALIGN=top><TD>ALL_MOUSE_EVENTS</TD><TD>report all button state changes<BR></TD></TR>
+<TR VALIGN=top><TD>REPORT_MOUSE_POSITION</TD><TD>report mouse movement<BR></TD></TR>
+<TR VALIGN=top><TD COLSPAN=2><HR></TD></TR>
+</TABLE>
+
+<P>
+
+Once a class of mouse events have been made visible in a window,
+calling the <B>wgetch</B> function on that window may return
+<B>KEY_MOUSE</B> as an indicator that a mouse event has been queued.
+To read the event data and pop the event off the queue, call
+<B>getmouse</B>.
+This function will return <B>OK</B> if a mouse event
+is actually visible in the given window, <B>ERR</B> otherwise.
+When <B>getmouse</B> returns <B>OK</B>, the data deposited as y and
+x in the event structure coordinates will be screen-relative character-cell
+coordinates.
+The returned state mask will have exactly one bit set to
+indicate the event type.
+The corresponding data in the queue is marked invalid.
+A subsequent call to <B>getmouse</B> will retrieve the next older
+item from the queue.
+<P>
+
+The <B>ungetmouse</B> function behaves analogously to <B>ungetch</B>.
+It pushes
+a <B>KEY_MOUSE</B> event onto the input queue, and associates with that event
+the given state data and screen-relative character-cell coordinates.
+<P>
+
+The <B>wenclose</B> function tests whether a given pair of screen-relative
+character-cell coordinates is enclosed by a given window, returning TRUE
+if it is and FALSE otherwise.
+It is useful for determining what subset of
+the screen windows enclose the location of a mouse event.
+<P>
+
+The <B>wmouse_trafo</B> function transforms a given pair of coordinates
+from stdscr-relative coordinates
+to coordinates relative to the given window or vice versa.
+Please remember, that stdscr-relative coordinates are not always identical
+to window-relative coordinates due to the mechanism to reserve lines on top
+or bottom of the screen for other purposes
+(see the <B>ripoffline()</B> and <B>slk_init</B> calls, for example).
+If the parameter <B>to_screen</B> is <B>TRUE</B>, the pointers
+<B>pY, pX</B> must reference the coordinates of a location
+inside the window <B>win</B>.
+They are converted to window-relative coordinates and returned
+through the pointers.
+If the conversion was successful, the function returns <B>TRUE</B>.
+If one of the parameters was NULL or the location is
+not inside the window, <B>FALSE</B> is returned.
+If <B>to_screen</B> is
+<B>FALSE</B>, the pointers <B>pY, pX</B> must reference window-relative
+coordinates.
+They are converted to stdscr-relative coordinates if the
+window <B>win</B> encloses this point.
+In this case the function returns <B>TRUE</B>.
+If one of the parameters is NULL or the point is not inside the
+window, <B>FALSE</B> is returned.
+Please notice, that the referenced coordinates
+are only replaced by the converted coordinates if the transformation was
+successful.
+<P>
+
+The <B>mouse_trafo</B> function performs the same translation
+as <B>wmouse_trafo</B>,
+using stdscr for <B>win</B>.
+<P>
+
+The <B>mouseinterval</B> function sets the maximum time (in thousands of a
+second) that can elapse between press and release events for them to
+be recognized as a click.
+Use <B>mouseinterval(0)</B> to disable click resolution.
+This function returns the previous interval value.
+Use <B>mouseinterval(-1)</B> to obtain the interval without altering it.
+The default is one sixth of a second.
+<P>
+
+The <B>has_mouse</B> function returns TRUE if the mouse driver has been
+successfully initialized.
+<P>
+
+Note that mouse events will be ignored when input is in cooked mode, and will
+cause an error beep when cooked mode is being simulated in a window by a
+function such as <B>getstr</B> that expects a linefeed for input-loop
+termination.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+<B>getmouse</B> and <B>ungetmouse</B>
+return the integer <B>ERR</B> upon failure or <B>OK</B>
+upon successful completion.
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>getmouse</B><DD>
+returns an error.
+If no mouse driver was initialized, or
+if the mask parameter is zero,
+it also returns an error if no more events remain in the queue.
+<DT><B>ungetmouse</B><DD>
+returns an error if the FIFO is full.
+</DL>
+</DL>
+
+<P>
+
+<B>mousemask</B>
+returns the mask of reportable events.
+<P>
+
+<B>mouseinterval</B>
+returns the previous interval value, unless
+the terminal was not initialized.
+In that case, it returns the maximum interval value (166).
+<P>
+
+<B>wenclose</B> and <B>wmouse_trafo</B>
+are boolean functions returning <B>TRUE</B> or <B>FALSE</B> depending
+on their test result.
+<A NAME="lbAF">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These calls were designed for <B>ncurses</B>(3NCURSES), and are not found in SVr4
+curses, 4.4BSD curses, or any other previous version of curses.
+<P>
+
+The feature macro <B>NCURSES_MOUSE_VERSION</B> is provided so the preprocessor
+can be used to test whether these features are present.
+If the interface is changed, the value of <B>NCURSES_MOUSE_VERSION</B> will be
+incremented.
+These values for <B>NCURSES_MOUSE_VERSION</B> may be
+specified when configuring ncurses:
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT>1<DD>
+has definitions for reserved events.
+The mask uses 28 bits.
+<DT>2<DD>
+adds definitions for button 5,
+removes the definitions for reserved events.
+The mask uses 29 bits.
+</DL>
+</DL>
+
+<P>
+
+The order of the <B>MEVENT</B> structure members is not guaranteed.
+Additional fields may be added to the structure in the future.
+<P>
+
+Under <B>ncurses</B>(3NCURSES), these calls are implemented using either
+xterm's built-in mouse-tracking API or
+platform-specific drivers including
+<DL COMPACT><DT><DD>
+Alessandro Rubini's gpm server
+<BR>
+
+FreeBSD sysmouse
+<BR>
+
+OS/2 EMX
+</DL>
+
+If you are using an unsupported configuration,
+mouse events will not be visible to
+<B>ncurses</B>(3NCURSES) (and the <B>mousemask</B> function will always
+return <B>0</B>).
+<P>
+
+If the terminfo entry contains a <B>XM</B> string,
+this is used in the xterm mouse driver to control the
+way the terminal is initialized for mouse operation.
+The default, if <B>XM</B> is not found,
+corresponds to private mode 1000 of xterm:
+<DL COMPACT><DT><DD>
+\E[?1000%?%p1%{1}%=%th%el%;
+</DL>
+
+The z member in the event structure is not presently used.
+It is intended
+for use with touch screens (which may be pressure-sensitive) or with
+3D-mice/trackballs/power gloves.
+<A NAME="lbAG">&nbsp;</A>
+<H2>BUGS</H2>
+
+Mouse events under xterm will not in fact be ignored during cooked mode,
+if they have been enabled by <B>mousemask</B>.
+Instead, the xterm mouse
+report sequence will appear in the string read.
+<P>
+
+Mouse events under xterm will not be detected correctly in a window with
+its keypad bit off, since they are interpreted as a variety of function key.
+Your terminfo description should have <B>kmous</B> set to &quot;\E[M&quot;
+(the beginning of the response from xterm for mouse clicks).
+Other values for <B>kmous</B> are permitted,
+but under the same assumption,
+i.e., it is the beginning of the response.
+<P>
+
+Because there are no standard terminal responses that would serve to identify
+terminals which support the xterm mouse protocol, <B>ncurses</B> assumes that
+if your $TERM environment variable contains &quot;xterm&quot;,
+or <B>kmous</B> is defined in
+the terminal description, then the terminal may send mouse events.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>kernel</B>(3NCURSES),
+<B>slk</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">PORTABILITY</A><DD>
+<DT><A HREF="#lbAG">BUGS</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:58 GMT, April 08, 2015
+</BODY>
+</HTML>

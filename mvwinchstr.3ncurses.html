@@ -1,0 +1,123 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of inchstr</TITLE>
+</HEAD><BODY>
+<H1>inchstr</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>inchstr</B>,
+<B>inchnstr</B>,
+<B>winchstr</B>,
+<B>winchnstr</B>,
+<B>mvinchstr</B>,
+<B>mvinchnstr</B>,
+<B>mvwinchstr</B>,
+<B>mvwinchnstr</B> - get a string of characters (and attributes) from a <B>curses</B> window
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int inchstr(chtype *chstr);</B>
+<BR>
+
+<B>int inchnstr(chtype *chstr, int n);</B>
+<BR>
+
+<B>int winchstr(WINDOW *win, chtype *chstr);</B>
+<BR>
+
+<B>int winchnstr(WINDOW *win, chtype *chstr, int n);</B>
+<BR>
+
+<B>int mvinchstr(int y, int x, chtype *chstr);</B>
+<BR>
+
+<B>int mvinchnstr(int y, int x, chtype *chstr, int n);</B>
+<BR>
+
+<B>int mvwinchstr(WINDOW *win, int y, int x, chtype *chstr);</B>
+<BR>
+
+<B>int mvwinchnstr(WINDOW *win, int y, int x, chtype *chstr, int n);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+These routines return a NULL-terminated array of <B>chtype</B> quantities,
+starting at the current cursor position in the named window and ending at the
+right margin of the window.  The four functions with <I>n</I> as
+the last argument, return a leading substring at most <I>n</I> characters long
+(exclusive of the trailing (chtype)0).
+Constants defined in <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B> can be used with the <B>&amp;</B> (logical
+AND) operator to extract the character or the attribute alone from any position
+in the <I>chstr</I> [see <B>inch</B>(3NCURSES)].
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+All routines return the integer <B>ERR</B> upon failure and an integer value
+other than <B>ERR</B> upon successful completion (the number of characters
+retrieved, exclusive of the trailing 0).
+<P>
+
+No error conditions are defined.
+If the <I>chstr</I> parameter is null,
+no data is returned,
+and the return value is zero.
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that all routines except <B>winchnstr</B> may be macros.  SVr4 does not
+document whether the result string is zero-terminated; it does not document
+whether a length limit argument includes any trailing 0; and it does not
+document the meaning of the return value.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are described in the XSI Curses standard, Issue 4.  It is no
+more specific than the SVr4 documentation on the trailing 0.  It does specify
+that the successful return of the functions is <B>OK</B>.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES), <B>inch</B>(3NCURSES).
+<P>
+
+Comparable functions in the wide-character (ncursesw) library are
+described in
+<B>in_wchstr</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

@@ -1,0 +1,290 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of slk</TITLE>
+</HEAD><BODY>
+<H1>slk</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>slk_init</B>,
+<B>slk_set</B>,
+<B>slk_wset</B>,
+<B>slk_refresh</B>,
+<B>slk_noutrefresh</B>,
+<B>slk_label</B>,
+<B>slk_clear</B>,
+<B>slk_restore</B>,
+<B>slk_touch</B>,
+<B>slk_attron</B>,
+<B>slk_attrset</B>,
+<B>slk_attroff</B>,
+<B>slk_attr_on</B>,
+<B>slk_attr_set</B>,
+<B>slk_attr_off</B>,
+<B>slk_attr</B>,
+<B>slk_color</B> - <B>curses</B> soft label routines
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int slk_init(int fmt);</B>
+<BR>
+
+<B>int slk_set(int labnum, const char *label, int fmt);</B>
+<BR>
+
+<B>int slk_refresh(void);</B>
+<BR>
+
+<B>int slk_noutrefresh(void);</B>
+<BR>
+
+<B>char *slk_label(int labnum);</B>
+<BR>
+
+<B>int slk_clear(void);</B>
+<BR>
+
+<B>int slk_restore(void);</B>
+<BR>
+
+<B>int slk_touch(void);</B>
+<BR>
+
+<B>int slk_attron(const chtype attrs);</B>
+<BR>
+
+<B>int slk_attroff(const chtype attrs);</B>
+<BR>
+
+<B>int slk_attrset(const chtype attrs);</B>
+<BR>
+
+<B>int slk_attr_on(attr_t attrs, void* opts);</B>
+<BR>
+
+<B>int slk_attr_off(const attr_t attrs, void * opts);</B>
+<BR>
+
+<B>int slk_attr_set(const attr_t attrs, short color_pair, void* opts);</B>
+<BR>
+
+<B>attr_t slk_attr(void);</B>
+<BR>
+
+<B>int slk_color(short color_pair);</B>
+<BR>
+
+<B>int slk_wset(int labnum, const wchar_t *label, int fmt);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The slk* functions manipulate the set of soft function-key labels that exist on
+many terminals.
+For those terminals that do not have soft labels,
+<B>curses</B> takes over the bottom line of <B>stdscr</B>, reducing the size of
+<B>stdscr</B> and the variable <B>LINES</B>.
+<B>curses</B> standardizes on eight
+labels of up to eight characters each.
+In addition to this, the ncurses
+implementation supports a mode where it simulates 12 labels of up to five
+characters each.
+This is useful for today's PC-like enduser devices.
+ncurses simulates this mode by taking over up to two lines at
+the bottom of the screen;
+it does not try to use any hardware support for this
+mode.
+<P>
+
+The <B>slk_init</B> routine must be called before <B>initscr</B> or <B>newterm</B>
+is called.
+If <B>initscr</B> eventually uses a line from <B>stdscr</B> to
+emulate the soft labels,
+then <I>fmt</I> determines how the labels are arranged on the screen:
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>0</B>
+
+<DD>
+indicates a 3-2-3 arrangement of
+the labels.
+<DT><B>1</B>
+
+<DD>
+indicates a 4-4 arrangement
+<DT><B>2</B>
+
+<DD>
+indicates the PC-like 4-4-4 mode.
+<DT><B>3</B>
+
+<DD>
+is again the PC-like 4-4-4 mode,
+but in addition an index line is generated, helping the user to
+identify the key numbers easily.
+</DL>
+</DL>
+
+<P>
+
+The <B>slk_set</B> routine
+(and the <B>slk_wset</B> routine for the wide-character library)
+has three parameters:
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><I>labnum</I>
+
+<DD>
+is the label number, from <B>1</B> to <B>8</B>
+(12 for <I>fmt</I> in <B>slk_init</B> is <B>2</B> or <B>3</B>);
+<DT><I>label</I>
+
+<DD>
+is be the string to put on the label,
+up to eight
+(five for <I>fmt</I> in <B>slk_init</B> is <B>2</B> or <B>3</B>)
+characters in length.
+A null string or a null pointer sets up a blank label.
+<DT><I>fmt</I>
+
+<DD>
+is either
+<B>0</B>, <B>1</B>, or <B>2</B>, indicating whether the label is to be
+left-justified, centered, or right-justified, respectively, within the
+label.
+</DL>
+</DL>
+
+<P>
+
+The <B>slk_refresh</B> and <B>slk_noutrefresh</B> routines correspond to
+the <B>wrefresh</B> and <B>wnoutrefresh</B> routines.
+<P>
+
+The <B>slk_label</B> routine returns the current label for label number
+<I>labnum</I>, with leading and trailing blanks stripped.
+<P>
+
+The <B>slk_clear</B> routine clears the soft labels from the screen.
+<P>
+
+The <B>slk_restore</B> routine restores the soft labels to the screen
+after a <B>slk_clear</B> has been performed.
+<P>
+
+The <B>slk_touch</B> routine forces all the soft labels to be output
+the next time a <B>slk_noutrefresh</B> is performed.
+<P>
+
+The <B>slk_attron</B>, <B>slk_attrset</B>, <B>slk_attroff</B> and <B>slk_attr</B>
+routines correspond to <B>attron</B>, <B>attrset</B>, <B>attroff</B> and <B>attr_get</B>.
+They have an effect only if soft labels are simulated on the bottom line of
+the screen.
+The default highlight for soft keys is A_STANDOUT (as in
+System V curses, which does not document this fact).
+<P>
+
+The <B>slk_color</B> routine corresponds to <B>color_set</B>.
+It has an effect only
+if soft labels are simulated on the bottom line of the screen.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+These routines return <B>ERR</B> upon failure and OK (SVr4 specifies only &quot;an
+integer value other than <B>ERR</B>&quot;) upon successful completion.
+<P>
+
+X/Open defines no error conditions.
+In this implementation
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>slk_attr</B><DD>
+returns the attribute used for the soft keys.
+<DT>
+<DD>
+
+<B>slk_attroff</B>, <B>slk_attron</B>, <B>slk_clear</B>, <B>slk_noutrefresh</B>, <B>slk_refresh</B>, <B>slk_touch</B>
+
+
+return an error
+if the terminal or the softkeys were not initialized.
+<DT><B>slk_attrset</B><DD>
+returns an error
+if the terminal or the softkeys were not initialized.
+<DT><B>slk_attr_set</B><DD>
+returns an error
+if the terminal or the softkeys were not initialized, or
+the color pair is outside the range 0..COLOR_PAIRS-1,
+or opts is not null.
+<DT><B>slk_color</B><DD>
+returns an error
+if the terminal or the softkeys were not initialized, or
+the color pair is outside the range 0..COLOR_PAIRS-1.
+<DT><B>slk_init</B><DD>
+returns an error
+if the format parameter is outside the range 0..3.
+<DT><B>slk_label</B><DD>
+returns <B>NULL</B> on error.
+<DT><B>slk_set</B><DD>
+returns an error
+if the terminal or the softkeys were not initialized, or
+the <I>labnum</I> parameter is outside the range of label counts, or
+if the format parameter is outside the range 0..2, or if
+memory for the labels cannot be allocated.
+</DL>
+</DL>
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Most applications would use <B>slk_noutrefresh</B> because a
+<B>wrefresh</B> is likely to follow soon.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+The XSI Curses standard, Issue 4, describes these functions.
+It changes the
+argument type of the attribute-manipulation functions <B>slk_attron</B>,
+<B>slk_attroff</B>, <B>slk_attrset</B> to be <B>attr_t</B>, and adds <B>const</B>
+qualifiers.
+The format codes <B>2</B> and <B>3</B> for <B>slk_init()</B> and the
+function <B>slk_attr</B> are specific to ncurses.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>attr</B>(3NCURSES),
+<B>initscr</B>(3NCURSES),
+<B>refresh</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

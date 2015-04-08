@@ -1,0 +1,89 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of legacy_coding</TITLE>
+</HEAD><BODY>
+<H1>legacy_coding</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>use_legacy_coding</B> - use terminal's default colors
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int use_legacy_coding(int level);</B>
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The
+<I>use_legacy_coding()</I>
+
+function is an extension to the curses library.
+It allows the caller to change the result of <B>unctrl</B>,
+and suppress related checks within the library that would normally
+cause nonprinting characters to be rendered in visible form.
+This affects only 8-bit characters.
+<P>
+
+The <I>level</I> parameter controls the result:
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT>0<DD>
+the library functions normally,
+rendering nonprinting characters as described in <B>unctrl</B>.
+<DT>1<DD>
+the library ignores <B>isprintf</B> for codes in the range 160-255.
+<DT>2<DD>
+the library ignores <B>isprintf</B> for codes in the range 128-255.
+It also modifies the output of <B>unctrl</B>, showing codes in the
+range 128-159 as is.
+</DL>
+</DL>
+
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+If the screen has not been initialized,
+or the <I>level</I> parameter is out of range,
+the function returns <B>ERR</B>.
+Otherwise, it returns the previous level: <B>0</B>, <B>1</B> or <B>2</B>.
+<A NAME="lbAF">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+This routine is specific to ncurses.
+It was not supported on Version 7, BSD or System V implementations.
+It is recommended that any code depending on ncurses extensions
+be conditioned using NCURSES_VERSION.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>unctrl</B>.
+<A NAME="lbAH">&nbsp;</A>
+<H2>AUTHOR</H2>
+
+Thomas Dickey (to support lynx's font-switching feature).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">PORTABILITY</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+<DT><A HREF="#lbAH">AUTHOR</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

@@ -1,0 +1,147 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of clear</TITLE>
+</HEAD><BODY>
+<H1>clear</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>erase</B>,
+<B>werase</B>,
+<B>clear</B>,
+<B>wclear</B>,
+<B>clrtobot</B>,
+<B>wclrtobot</B>,
+<B>clrtoeol</B>,
+<B>wclrtoeol</B> - clear all or part of a <B>curses</B> window
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B># include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int erase(void);</B>
+<BR>
+
+<B>int werase(WINDOW *win);</B>
+<BR>
+
+<B>int clear(void);</B>
+<BR>
+
+<B>int wclear(WINDOW *win);</B>
+<BR>
+
+<B>int clrtobot(void);</B>
+<BR>
+
+<B>int wclrtobot(WINDOW *win);</B>
+<BR>
+
+<B>int clrtoeol(void);</B>
+<BR>
+
+<B>int wclrtoeol(WINDOW *win);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The <B>erase</B> and <B>werase</B> routines copy blanks to every
+position in the window, clearing the screen.
+<P>
+
+The <B>clear</B> and <B>wclear</B> routines are like <B>erase</B> and
+<B>werase</B>, but they also call <B>clearok</B>, so that the screen is
+cleared completely on the next call to <B>wrefresh</B> for that window
+and repainted from scratch.
+<P>
+
+The <B>clrtobot</B> and <B>wclrtobot</B> routines erase from the cursor to the
+end of screen.  That is, they erase all lines below the cursor in the window.
+Also, the current line to the right of the cursor, inclusive, is erased.
+<P>
+
+The <B>clrtoeol</B> and <B>wclrtoeol</B> routines erase the current line
+to the right of the cursor, inclusive, to the end of the current line.
+<P>
+
+Blanks created by erasure have the current background rendition (as set
+by <B>wbkgdset</B>) merged into them.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+All routines return the integer <B>OK</B> on success and <B>ERR</B> on failure.
+The SVr4.0 manual says &quot;or a
+non-negative integer if <B>immedok</B> is set&quot;, but this appears to be an error.
+<P>
+
+X/Open defines no error conditions.
+In this implementation,
+functions using a window pointer parameter return an error if it is null.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that <B>erase</B>, <B>werase</B>, <B>clear</B>, <B>wclear</B>,
+<B>clrtobot</B>, and <B>clrtoeol</B> may be macros.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are described in the XSI Curses standard, Issue 4.  The
+standard specifies that they return <B>ERR</B> on failure, but specifies no
+error conditions.
+<P>
+
+Some historic curses implementations had, as an undocumented feature, the
+ability to do the equivalent of <B>clearok(..., 1)</B> by saying
+<B>touchwin(stdscr)</B> or <B>clear(stdscr)</B>.  This will not work under
+ncurses.
+<P>
+
+This implementation, and others such as Solaris,
+sets the current position to 0,0 after erasing
+via <B>werase()</B> and <B>wclear()</B>.
+That fact is not documented in other implementations,
+and may not be true of implementations
+which were not derived from SVr4 source.
+<P>
+
+Not obvious from the description,
+most implementations clear the screen after <B>wclear</B>
+even for a subwindow or derived window.
+If you do not want to clear the screen during the next <B>wrefresh</B>,
+use <B>werase</B> instead.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>outopts</B>(3NCURSES),
+<B>refresh</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

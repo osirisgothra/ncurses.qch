@@ -1,0 +1,182 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of trace</TITLE>
+</HEAD><BODY>
+<H1>trace</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>_tracef</B>,
+<B>_tracedump</B>,
+<B>_traceattr</B>,
+<B>_traceattr2</B>,
+<B>_nc_tracebits</B>,
+<B>_tracecchar_t</B>,
+<B>_tracecchar_t2</B>,
+<B>_tracechar</B>,
+<B>_tracechtype</B>,
+<B>_tracechtype2</B>,
+<B>_tracemouse</B>,
+<B>trace</B> - <B>curses</B> debugging routines
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>void _tracef(const char *format, ...);</B>
+<BR>
+
+<B>void _tracedump(const char *label, WINDOW *win);</B>
+<BR>
+
+<B>char *_traceattr(attr_t attr);</B>
+<BR>
+
+<B>char *_traceattr2(int buffer, chtype ch);</B>
+<BR>
+
+<B>char *_nc_tracebits(void);</B>
+<BR>
+
+<B>char * _tracecchar_t(const cchar_t *string);</B>
+<BR>
+
+<B>char * _tracecchar_t2(int buffer, const cchar_t *string);</B>
+<BR>
+
+<B>char *_tracechar(int ch);</B>
+<BR>
+
+<B>char *_tracechtype(chtype ch);</B>
+<BR>
+
+<B>char *_tracechtype2(int buffer, chtype ch);</B>
+<BR>
+
+<B>char *_tracemouse(const MEVENT *event);</B>
+<BR>
+
+<B>void trace(const unsigned int param);</B>
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The <B>trace</B> routines are used for debugging the ncurses libraries,
+as well as applications which use the ncurses libraries.
+These functions are normally available only with the debugging library
+<I>libncurses_g.a</I>, but may be compiled into any model (shared, static,
+profile) by defining the symbol <B>TRACE</B>.
+Additionally, some functions are only available with the wide-character
+configuration of the libraries.
+<P>
+
+The principal parts of this interface are the <B>trace</B> routine which
+selectively enables different tracing features, and the <B>_tracef</B>
+routine which writes formatted data to the <I>trace</I> file.
+<P>
+
+Calling <B>trace</B> with a nonzero parameter opens the file <B>trace</B>
+in the current directory for output.  The parameter is formed by OR'ing
+values from the list of <B>TRACE_</B><I>xxx</I> definitions in <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>.
+These include:
+<DL COMPACT>
+<DT>TRACE_DISABLE<DD>
+turn off tracing.
+<DT>TRACE_TIMES<DD>
+trace user and system times of updates.
+<DT>TRACE_TPUTS<DD>
+trace tputs calls.
+<DT>TRACE_UPDATE<DD>
+trace update actions, old &amp; new screens.
+<DT>TRACE_MOVE<DD>
+trace cursor movement and scrolling.
+<DT>TRACE_CHARPUT<DD>
+trace all character outputs.
+<DT>TRACE_ORDINARY<DD>
+trace all update actions.
+The old and new screen contents are written to the trace file
+for each refresh.
+<DT>TRACE_CALLS<DD>
+trace all curses calls.
+The parameters for each call are traced, as well as return values.
+<DT>TRACE_VIRTPUT<DD>
+trace virtual character puts, i.e., calls to <B>addch</B>.
+<DT>TRACE_IEVENT<DD>
+trace low-level input processing, including timeouts.
+<DT>TRACE_BITS<DD>
+trace state of TTY control bits.
+<DT>TRACE_ICALLS<DD>
+trace internal/nested calls.
+<DT>TRACE_CCALLS<DD>
+trace per-character calls.
+<DT>TRACE_DATABASE<DD>
+trace read/write of terminfo/termcap data.
+<DT>TRACE_ATTRS<DD>
+trace changes to video attributes and colors.
+<DT>TRACE_MAXIMUM<DD>
+maximum trace level, enables all of the separate trace features.
+</DL>
+<P>
+
+Some tracing features are enabled whenever the <B>trace</B> parameter
+is nonzero.  Some features overlap.
+The specific names are used as a guideline.
+<P>
+
+These functions check the <B>NCURSES_TRACE</B> environment variable,
+to set the tracing feature as if <B>trace</B> was called:
+<DL COMPACT><DT><DD>
+filter,
+initscr,
+new_prescr,
+newterm,
+nofilter,
+ripoffline,
+setupterm,
+slk_init,
+tgetent
+</DL>
+
+<P>
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+Routines which return a value are designed to be used as parameters
+to the <B>_tracef</B> routine.
+<A NAME="lbAF">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are not part of the XSI interface.
+Some other curses implementations are known to
+have similar, undocumented features,
+but they are not compatible with ncurses.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">PORTABILITY</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

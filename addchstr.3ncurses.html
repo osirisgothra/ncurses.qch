@@ -1,0 +1,137 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of addchstr</TITLE>
+</HEAD><BODY>
+<H1>addchstr</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>addchstr</B>,
+<B>addchnstr</B>,
+<B>waddchstr</B>,
+<B>waddchnstr</B>,
+<B>mvaddchstr</B>,
+<B>mvaddchnstr</B>,
+<B>mvwaddchstr</B>,
+<B>mvwaddchnstr</B> - add a string of characters (and attributes) to a <B>curses</B> window
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<PRE>
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+
+<B>int addchstr(const chtype *chstr);</B>
+<BR>
+<B>int addchnstr(const chtype *chstr, int n);</B>
+<BR>
+<B>int waddchstr(WINDOW *win, const chtype *chstr);</B>
+<BR>
+<B>int waddchnstr(WINDOW *win, const chtype *chstr, int n);</B>
+<BR>
+<B>int mvaddchstr(int y, int x, const chtype *chstr);</B>
+<BR>
+<B>int mvaddchnstr(int y, int x, const chtype *chstr, int n);</B>
+<BR>
+<B>int mvwaddchstr(WINDOW *win, int y, int x, const chtype *chstr);</B>
+<BR>
+<B>int mvwaddchnstr(WINDOW *win, int y, int x, const chtype *chstr, int n);</B>
+</PRE>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+These functions copy the (null-terminated)
+<I>chstr</I> array
+into the window image structure
+starting at the current cursor position.
+The four functions with <I>n</I> as the last
+argument copy at most <I>n</I> elements,
+but no more than will fit on the line.
+If <B>n</B>=<B>-1</B> then the whole array is copied,
+to the maximum number of characters that will fit on the line.
+<P>
+
+The window cursor is <I>not</I> advanced.
+These functions work faster than <B>waddnstr</B>.
+On the other hand:
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+they do not perform checking
+(such as for the newline, backspace, or carriage return characters),
+
+<DT>&bull;<DD>
+
+they do not advance the current cursor position,
+
+<DT>&bull;<DD>
+
+they do not expand other control characters to ^-escapes, and
+
+<DT>&bull;<DD>
+
+they truncate the string if it crosses the right margin,
+rather than wrapping it around to the new line.
+</DL>
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+All functions return the integer <B>ERR</B> upon failure and <B>OK</B> on success.
+<P>
+
+X/Open does not define any error conditions.
+This implementation returns an error
+if the window pointer is null.
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+All functions except <B>waddchnstr</B> may be macros.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These entry points are described in the XSI Curses standard, Issue 4.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>addstr</B>(3NCURSES),
+<B>ncurses</B>(3NCURSES).
+<P>
+
+Comparable functions in the wide-character (ncursesw) library are
+described in
+<B>add_wchstr</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

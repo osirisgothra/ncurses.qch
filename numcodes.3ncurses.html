@@ -1,0 +1,190 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of terminfo_variables</TITLE>
+</HEAD><BODY>
+<H1>terminfo_variables</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>SP</B>,
+<B>acs_map</B>,
+<B>boolcodes</B>,
+<B>boolfnames</B>,
+<B>boolnames</B>,
+<B>cur_term</B>,
+<B>numcodes</B>,
+<B>numfnames</B>,
+<B>numnames</B>,
+<B>strcodes</B>,
+<B>strfnames</B>,
+<B>strnames</B>,
+<B>ttytype</B>
+- <B>curses</B> terminfo global variables
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<PRE>
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<BR>
+<B>#include &lt;<A HREF="file:///usr/include/term.h">term.h</A>&gt;</B>
+
+<B>chtype acs_map[];</B>
+<BR>
+<B>NCURSES_CONST char * const * boolcodes;</B>
+<BR>
+<B>NCURSES_CONST char * const * boolfnames;</B>
+<BR>
+<B>NCURSES_CONST char * const * boolnames;</B>
+<BR>
+<B>TERMINAL * cur_term;</B>
+<BR>
+<B>NCURSES_CONST char * const * numcodes;</B>
+<BR>
+<B>NCURSES_CONST char * const * numfnames;</B>
+<BR>
+<B>NCURSES_CONST char * const * numnames;</B>
+<BR>
+<B>NCURSES_CONST char * const * strcodes;</B>
+<BR>
+<B>NCURSES_CONST char * const * strfnames;</B>
+<BR>
+<B>NCURSES_CONST char * const * strnames;</B>
+<BR>
+<B>char ttytype[];</B>
+<BR>
+</PRE>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+This page summarizes variables provided by the <B>curses</B> library's
+low-level terminfo interface.
+A more complete description is given in the <B><A HREF="/cgi-bin/man/man2html?3X+curs_terminfo">curs_terminfo</A></B>(3X) manual page.
+<P>
+
+Depending on the configuration, these may be actual variables,
+or macros (see <B>threads</B>(3NCURSES))
+which provide read-only access to <I>curses</I>'s state.
+In either case, applications should treat them as read-only to avoid
+confusing the library.
+<A NAME="lbAE">&nbsp;</A>
+<H3>Alternate Character Set Mapping</H3>
+
+After initializing the curses or terminfo interfaces,
+the <B>acs_map</B> array holds information used to translate cells
+with the <B>A_ALTCHARSET</B> video attribute into line-drawing characters.
+<P>
+
+The encoding of the information in this array has changed periodically.
+Application developers need only know that it is used for the &quot;ACS_&quot;
+constants in &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;.
+<P>
+
+The comparable data for the wide-character library is a private variable.
+<A NAME="lbAF">&nbsp;</A>
+<H3>Current Terminal Data</H3>
+
+After initializing the curses or terminfo interfaces,
+the <B>cur_term</B> contains data describing the current terminal.
+This variable is also set as a side-effect of <B><A HREF="/cgi-bin/man/man2html?3X+set_term">set_term</A></B>(3X)
+and <B><A HREF="/cgi-bin/man/man2html?3X+delscreen">delscreen</A></B>(3X).
+<P>
+
+It is possible to save a value of <B>cur_term</B> for subsequent
+use as a parameter to <B>set_term</B>, for switching between screens.
+Alternatively, one can save the return value from <B>newterm</B>
+or <B>setupterm</B> to reuse in <B>set_term</B>.
+<A NAME="lbAG">&nbsp;</A>
+<H3>Terminfo Names</H3>
+
+The <B><A HREF="/cgi-bin/man/man2html?1+tic">tic</A></B>(1) and <B><A HREF="/cgi-bin/man/man2html?1+infocmp">infocmp</A></B>(1) programs use lookup tables for
+the long and short names of terminfo capabilities,
+as well as the corresponding names for termcap capabilities.
+These are available to other applications,
+though the hash-tables are not available.
+<P>
+
+The long terminfo capability names use a &quot;l&quot; (ell) in their names:
+boolfnames
+numfnames
+strfnames
+<P>
+
+These are the short names for terminfo capabilities:
+boolnames,
+numnames, and
+strnames.
+<P>
+
+These are the corresponding names used for termcap descriptions:
+boolcodes,
+numcodes, and
+strcodes.
+<A NAME="lbAH">&nbsp;</A>
+<H3>Terminal Type</H3>
+
+On initialization of the curses or terminfo interfaces,
+<B>setupterm</B> copies the terminal name to the array <B>ttytype</B>.
+<A NAME="lbAI">&nbsp;</A>
+<H2>NOTES</H2>
+
+The low-level terminfo interface is initialized using
+
+<B><A HREF="/cgi-bin/man/man2html?3X+setupterm">setupterm</A></B>(3X).
+
+The upper-level curses interface uses the low-level terminfo interface,
+internally.
+<A NAME="lbAJ">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+X/Open Curses does not describe any of these except for <B>cur_term</B>.
+(The inclusion of <B>cur_term</B> appears to be an oversight,
+since other comparable low-level information is omitted by X/Open).
+<P>
+
+Other implementations may have comparable variables.
+Some implementations provide the variables in their libraries,
+but omit them from the header files.
+<A NAME="lbAK">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+
+<B>ncurses</B>(3NCURSES),
+<B>terminfo</B>(3NCURSES),
+<B>threads</B>(3NCURSES),
+<B><A HREF="/cgi-bin/man/man2html?5+terminfo">terminfo</A></B>(5).
+
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DL>
+<DT><A HREF="#lbAE">Alternate Character Set Mapping</A><DD>
+<DT><A HREF="#lbAF">Current Terminal Data</A><DD>
+<DT><A HREF="#lbAG">Terminfo Names</A><DD>
+<DT><A HREF="#lbAH">Terminal Type</A><DD>
+</DL>
+<DT><A HREF="#lbAI">NOTES</A><DD>
+<DT><A HREF="#lbAJ">PORTABILITY</A><DD>
+<DT><A HREF="#lbAK">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

@@ -1,0 +1,92 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of extensions</TITLE>
+</HEAD><BODY>
+<H1>extensions</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>curses_version</B>,
+<B>use_extended_names</B> - miscellaneous curses extensions
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>const char * curses_version(void);</B>
+<BR>
+
+<B>int use_extended_names(bool enable);</B>
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+These functions are extensions to the curses library
+which do not fit easily into other categories.
+<P>
+
+Use
+<I>curses_version()</I>
+
+to get the version number, including patch level of the library, e.g.,
+<B>5.0.19991023</B>
+
+<P>
+
+The
+<I>use_extended_names()</I>
+
+function controls whether the calling application
+is able to use user-defined or nonstandard names
+which may be compiled into the terminfo
+description, i.e., via the terminfo or termcap interfaces.
+Normally these names are available for use, since the essential decision
+is made by using the <B>-x</B> option of <B>tic</B> to compile
+extended terminal definitions.
+However you can disable this feature
+to ensure compatibility with other implementations of curses.
+<A NAME="lbAE">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These routines are specific to ncurses.  They were not supported on
+Version 7, BSD or System V implementations.  It is recommended that
+any code depending on them be conditioned using NCURSES_VERSION.
+<A NAME="lbAF">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>getch</B>(3NCURSES),
+<B>mouse</B>(3NCURSES),
+<B>print</B>(3NCURSES),
+<B>util</B>(3NCURSES),
+<B>default_colors</B>(3NCURSES),
+<B>define_key</B>(3NCURSES),
+<B>keybound</B>(3NCURSES),
+<B>keyok</B>(3NCURSES),
+<B>resizeterm</B>(3NCURSES),
+<B>wresize</B>(3NCURSES).
+<A NAME="lbAG">&nbsp;</A>
+<H2>AUTHOR</H2>
+
+Thomas Dickey.
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">PORTABILITY</A><DD>
+<DT><A HREF="#lbAF">SEE ALSO</A><DD>
+<DT><A HREF="#lbAG">AUTHOR</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

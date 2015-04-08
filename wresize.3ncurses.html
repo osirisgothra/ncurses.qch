@@ -1,0 +1,70 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of wresize</TITLE>
+</HEAD><BODY>
+<H1>wresize</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>wresize</B> - resize a curses window
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int wresize(WINDOW *win, int lines, int columns);</B>
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+This is an extension to the curses library.                                    
+It reallocates storage for an <B>ncurses</B> 
+window to adjust its dimensions to the specified values.
+If either dimension is larger than the current values, the
+window's data is filled with blanks that have the current background rendition
+(as set by <B>wbkgdset</B>) merged into them.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+The function returns the integer <B>ERR</B> upon failure and <B>OK</B> on success.
+It will fail if either of the dimensions less than or equal to zero,
+or if an error occurs while (re)allocating memory for the window.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+The only restriction placed on the dimensions is that they be greater than zero.
+The dimensions are not compared to <B>curses</B> screen dimensions to
+simplify the logic of <B>resizeterm</B>.
+The caller must ensure that the window's dimensions fit within the
+actual screen dimensions.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>resizeterm</B>(3NCURSES).
+<A NAME="lbAH">&nbsp;</A>
+<H2>AUTHOR</H2>
+
+Thomas Dickey (from an equivalent function written in 1988 for BSD curses).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+<DT><A HREF="#lbAH">AUTHOR</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:58 GMT, April 08, 2015
+</BODY>
+</HTML>

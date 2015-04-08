@@ -1,0 +1,275 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of add_wch</TITLE>
+</HEAD><BODY>
+<H1>add_wch</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>add_wch</B>,
+<B>wadd_wch</B>,
+<B>mvadd_wch</B>,
+<B>mvwadd_wch</B>,
+<B>echo_wchar</B>,
+<B>wecho_wchar</B> - add a complex character and rendition to a <B>curses</B> window, then advance the cursor
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<P>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int add_wch( const cchar_t *</B><I>wch</I><B> );</B>
+
+<BR>
+
+<B>int wadd_wch( WINDOW *</B><I>win</I>, const cchar_t *<I>wch</I><B> );</B>
+
+<BR>
+
+<B>int mvadd_wch( int </B><I>y</I>, int <I>x</I>, const cchar_t *<I>wch</I><B> );</B>
+
+<BR>
+
+<B>int mvwadd_wch( WINDOW *</B><I>win</I>, int <I>y</I>, int <I>x</I>, const cchar_t *<I>wch</I><B> );</B>
+
+<BR>
+
+<B>int echo_wchar( const cchar_t *</B><I>wch</I><B> );</B>
+
+<BR>
+
+<B>int wecho_wchar( WINDOW *</B><I>win</I>, const cchar_t *<I>wch</I><B> );</B>
+
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+<P>
+
+The
+<B>add_wch</B>,
+<B>wadd_wch</B>,
+<B>mvadd_wch</B>, and
+<B>mvwadd_wch</B>
+functions put the complex character <I>wch</I> into the given
+window at its current position,
+which is then advanced.
+These functions perform
+wrapping and special-character processing as follows:
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+If <I>wch</I> refers to a spacing character,
+then any previous character at that location is removed.
+A new character specified by <I>wch</I> is
+placed at that location with rendition specified by <I>wch</I>.
+The cursor then advances to
+the next spacing character on the screen.
+
+<DT>&bull;<DD>
+
+If <I>wch</I> refers to a non-spacing character,
+all previous characters at that location are preserved.
+The non-spacing characters of <I>wch</I>
+are added to the spacing complex character,
+and the rendition specified by <I>wch</I> is ignored.
+
+<DT>&bull;<DD>
+
+If the character part of <I>wch</I> is
+a tab, newline, backspace or other control character,
+the window is updated and the cursor moves as if <B>addch</B> were called.
+</DL>
+<P>
+
+The <B>echo_wchar</B>
+function is functionally equivalent to a call to
+<B>add_wch</B>
+followed by a call to
+<B>refresh</B>.
+Similarly, the
+<B>wecho_wchar</B>
+is functionally equivalent to a call to
+<B>wadd_wch</B>
+followed by a call to
+<B>wrefresh</B>.
+The knowledge
+that only a single character is being output is taken into consideration and,
+for non-control characters, a considerable performance gain might be seen
+by using the *<B>echo</B>* functions instead of their equivalents.
+<A NAME="lbAE">&nbsp;</A>
+<H3>Line Graphics</H3>
+
+Like <B><A HREF="/cgi-bin/man/man2html?3X+addch">addch</A></B>(3X),
+<B>addch_wch</B> accepts symbols which make it simple to draw lines and other
+frequently used special characters.
+These symbols correspond to the same VT100 line-drawing set as
+<B><A HREF="/cgi-bin/man/man2html?3X+addch">addch</A></B>(3X).
+<P>
+
+<TABLE>
+<TR VALIGN=top><TD><I>Name</I></TD><TD><I>Unicode</I></TD><TD><I>Default</I></TD><TD><I>Description</I><BR></TD></TR>
+<TR VALIGN=top><TD><HR></TD><TD><HR></TD><TD><HR></TD><TD><HR></TD></TR>
+<TR VALIGN=top><TD>WACS_BOARD</TD><TD>0x2592 </TD><TD>#</TD><TD>board of squares<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_BTEE</TD><TD>0x2534 </TD><TD>+</TD><TD>bottom tee<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_BULLET</TD><TD>0x00b7 </TD><TD>o</TD><TD>bullet<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_CKBOARD</TD><TD>0x2592 </TD><TD>:</TD><TD>checker board (stipple)<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_DARROW</TD><TD>0x2193 </TD><TD>v</TD><TD>arrow pointing down<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_DEGREE</TD><TD>0x00b0 </TD><TD>'</TD><TD>degree symbol<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_DIAMOND</TD><TD>0x25c6 </TD><TD>+</TD><TD>diamond<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_GEQUAL</TD><TD>0x2265 </TD><TD>&gt;</TD><TD>greater-than-or-equal-to<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_HLINE</TD><TD>0x2500 </TD><TD>-</TD><TD>horizontal line<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_LANTERN</TD><TD>0x2603 </TD><TD>#</TD><TD>lantern symbol<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_LARROW</TD><TD>0x2190 </TD><TD>&lt;</TD><TD>arrow pointing left<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_LEQUAL</TD><TD>0x2264 </TD><TD>&lt;</TD><TD>less-than-or-equal-to<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_LLCORNER</TD><TD>0x2514 </TD><TD>+</TD><TD>lower left-hand corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_LRCORNER</TD><TD>0x2518 </TD><TD>+</TD><TD>lower right-hand corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_LTEE</TD><TD>0x2524 </TD><TD>+</TD><TD>left tee<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_NEQUAL</TD><TD>0x2260 </TD><TD>!</TD><TD>not-equal<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_PI</TD><TD>0x03c0 </TD><TD>*</TD><TD>greek pi<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_PLMINUS</TD><TD>0x00b1 </TD><TD>#</TD><TD>plus/minus<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_PLUS</TD><TD>0x253c </TD><TD>+</TD><TD>plus<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_RARROW</TD><TD>0x2192 </TD><TD>&gt;</TD><TD>arrow pointing right<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_RTEE</TD><TD>0x251c </TD><TD>+</TD><TD>right tee<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_S1</TD><TD>0x23ba </TD><TD>-</TD><TD>scan line 1<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_S3</TD><TD>0x23bb </TD><TD>-</TD><TD>scan line 3<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_S7</TD><TD>0x23bc </TD><TD>-</TD><TD>scan line 7<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_S9</TD><TD>0x23bd </TD><TD>_</TD><TD>scan line 9<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_STERLING</TD><TD>0x00a3 </TD><TD>f</TD><TD>pound-sterling symbol<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_TTEE</TD><TD>0x252c </TD><TD>+</TD><TD>top tee<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_UARROW</TD><TD>0x2191  </TD><TD>^</TD><TD>arrow pointing up<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_ULCORNER</TD><TD>0x250c </TD><TD>+</TD><TD>upper left-hand corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_URCORNER</TD><TD>0x2510 </TD><TD>+</TD><TD>upper right-hand corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_VLINE</TD><TD>0x2502 </TD><TD>|</TD><TD>vertical line<BR></TD></TR>
+</TABLE>
+
+<P>
+
+The wide-character configuration of ncurses also defines symbols
+for thick- and double-lines:
+<P>
+
+<TABLE>
+<TR VALIGN=top><TD><I>Name</I></TD><TD><I>Unicode</I></TD><TD><I>Default</I></TD><TD><I>Description</I><BR></TD></TR>
+<TR VALIGN=top><TD><HR></TD><TD><HR></TD><TD><HR></TD><TD><HR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_LLCORNER</TD><TD>0x2517</TD><TD>+</TD><TD>thick lower left corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_URCORNER</TD><TD>0x2513</TD><TD>+</TD><TD>thick upper right corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_LRCORNER</TD><TD>0x251b</TD><TD>+</TD><TD>thick lower right corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_LTEE</TD><TD>0x252b</TD><TD>+</TD><TD>thick tee pointing right<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_RTEE</TD><TD>0x2523</TD><TD>+</TD><TD>thick tee pointing left<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_BTEE</TD><TD>0x253b</TD><TD>+</TD><TD>thick tee pointing up<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_TTEE</TD><TD>0x2533</TD><TD>+</TD><TD>thick tee pointing down<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_HLINE</TD><TD>0x2501</TD><TD>-</TD><TD>thick horizontal line<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_VLINE</TD><TD>0x2503</TD><TD>|</TD><TD>thick vertical line<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_T_PLUS</TD><TD>0x254b</TD><TD>+</TD><TD>thick large plus or crossover<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_ULCORNER</TD><TD>0x2554</TD><TD>+</TD><TD>double upper left corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_LLCORNER</TD><TD>0x255a</TD><TD>+</TD><TD>double lower left corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_URCORNER</TD><TD>0x2557</TD><TD>+</TD><TD>double upper right corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_LRCORNER</TD><TD>0x255d</TD><TD>+</TD><TD>double lower right corner<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_RTEE</TD><TD>0x2563</TD><TD>+</TD><TD>double tee pointing left<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_LTEE</TD><TD>0x2560</TD><TD>+</TD><TD>double tee pointing right<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_BTEE</TD><TD>0x2569</TD><TD>+</TD><TD>double tee pointing up<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_TTEE</TD><TD>0x2566</TD><TD>+</TD><TD>double tee pointing down<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_HLINE</TD><TD>0x2550</TD><TD>-</TD><TD>double horizontal line<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_VLINE</TD><TD>0x2551</TD><TD>|</TD><TD>double vertical line<BR></TD></TR>
+<TR VALIGN=top><TD>WACS_D_PLUS</TD><TD>0x256c</TD><TD>+</TD><TD>double large plus or crossover<BR></TD></TR>
+</TABLE>
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+<P>
+
+All routines return the integer <B>ERR</B> upon failure and <B>OK</B> on success.
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAG">&nbsp;</A>
+<H2>NOTES</H2>
+
+<P>
+
+Note that
+<B>add_wch</B>,
+<B>mvadd_wch</B>,
+<B>mvwadd_wch</B>, and
+<B>echo_wchar</B>
+may be macros.
+<A NAME="lbAH">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+<P>
+
+All of these functions are described in the XSI Curses standard, Issue 4.
+The defaults specified for line-drawing characters apply in the POSIX locale.
+<P>
+
+X/Open Curses makes it clear that the WACS_ symbols should be defined as
+a pointer to <B>cchar_t</B> data, e.g., in the discussion of <B>border_set</B>.
+A few implementations are problematic:
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+NetBSD curses defines the symbols as a <B>wchar_t</B> within a <B>cchar_t</B>.
+
+<DT>&bull;<DD>
+
+HPUX curses equates some of the <I>ACS_</I> symbols
+to the analogous <I>WACS_</I> symbols as if the <I>ACS_</I> symbols were
+wide characters.
+The misdefined symbols are the arrows
+and other symbols which are not used for line-drawing.
+</DL>
+<P>
+
+X/Open Curses does not define symbols for thick- or double-lines.
+SVr4 curses implementations defined their line-drawing symbols in
+terms of intermediate symbols.
+This implementation extends those symbols, providing new definitions
+which are not in the SVr4 implementations.
+<A NAME="lbAI">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<P>
+
+<B>ncurses</B>(3NCURSES),
+<B>addch</B>(3NCURSES),
+<B>attr</B>(3NCURSES),
+<B>clear</B>(3NCURSES),
+<B>outopts</B>(3NCURSES),
+<B>refresh</B>(3NCURSES),
+<B><A HREF="/cgi-bin/man/man2html?3+putwc">putwc</A></B>(3)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DL>
+<DT><A HREF="#lbAE">Line Graphics</A><DD>
+</DL>
+<DT><A HREF="#lbAF">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAG">NOTES</A><DD>
+<DT><A HREF="#lbAH">PORTABILITY</A><DD>
+<DT><A HREF="#lbAI">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:58 GMT, April 08, 2015
+</BODY>
+</HTML>

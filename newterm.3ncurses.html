@@ -1,0 +1,174 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of initscr</TITLE>
+</HEAD><BODY>
+<H1>initscr</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>initscr</B>,
+<B>newterm</B>,
+<B>endwin</B>,
+<B>isendwin</B>,
+<B>set_term</B>,
+<B>delscreen</B> - <B>curses</B> screen initialization and manipulation routines
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>WINDOW *initscr(void);</B>
+<BR>
+
+<B>int endwin(void);</B>
+<BR>
+
+<B>bool isendwin(void);</B>
+<BR>
+
+<B>SCREEN *newterm(char *type, FILE *outfd, FILE *infd);</B>
+<BR>
+
+<B>SCREEN *set_term(SCREEN *new);</B>
+<BR>
+
+<B>void delscreen(SCREEN* sp);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+<B>initscr</B> is normally the first <B>curses</B> routine to call when
+initializing a program.  A few special routines sometimes need to be
+called before it; these are <B>slk_init</B>, <B>filter</B>, <B>ripoffline</B>,
+<B>use_env</B>.  For multiple-terminal applications, <B>newterm</B> may be
+called before <B>initscr</B>.
+<P>
+
+The initscr code determines the terminal type and initializes all <B>curses</B>
+data structures.  <B>initscr</B> also causes the first call to <B>refresh</B> to
+clear the screen.  If errors occur, <B>initscr</B> writes an appropriate error
+message to standard error and exits; otherwise, a pointer is returned to
+<B>stdscr</B>.
+<P>
+
+A program that outputs to more than one terminal should use the <B>newterm</B>
+routine for each terminal instead of <B>initscr</B>.  A program that needs to
+inspect capabilities, so it can continue to run in a line-oriented mode if the
+terminal cannot support a screen-oriented program, would also use
+<B>newterm</B>.  The routine <B>newterm</B> should be called once for each
+terminal.  It returns a variable of type <B>SCREEN *</B> which should be saved
+as a reference to that terminal.  The arguments are the <I>type</I> of the
+terminal to be used in place of <B>$TERM</B>, a file pointer for output to the
+terminal, and another file pointer for input from the terminal (if <I>type</I>
+is <B>NULL</B>, <B>$TERM</B> will be used).  The program must also call
+<B>endwin</B> for each terminal being used before exiting from <B>curses</B>.
+If <B>newterm</B> is called more than once for the same terminal, the first
+terminal referred to must be the last one for which <B>endwin</B> is called.
+<P>
+
+A program should always call <B>endwin</B> before exiting or escaping from
+<B>curses</B> mode temporarily.  This routine restores tty modes, moves the
+cursor to the lower left-hand corner of the screen and resets the terminal into
+the proper non-visual mode.  Calling <B>refresh</B> or <B>doupdate</B> after a
+temporary escape causes the program to resume visual mode.
+<P>
+
+The <B>isendwin</B> routine returns <B>TRUE</B> if <B>endwin</B> has been
+called without any subsequent calls to <B>wrefresh</B>, and <B>FALSE</B>
+otherwise.
+<P>
+
+The <B>set_term</B> routine is used to switch between different
+terminals.  The screen reference <B>new</B> becomes the new current
+terminal.  The previous terminal is returned by the routine.  This is
+the only routine which manipulates <B>SCREEN</B> pointers; all other
+routines affect only the current terminal.
+<P>
+
+The <B>delscreen</B> routine frees storage associated with the
+<B>SCREEN</B> data structure.  The <B>endwin</B> routine does not do
+this, so <B>delscreen</B> should be called after <B>endwin</B> if a
+particular <B>SCREEN</B> is no longer needed.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+<B>endwin</B> returns the integer <B>ERR</B> upon failure and <B>OK</B>
+upon successful completion.
+<P>
+
+Routines that return pointers always return <B>NULL</B> on error.
+<P>
+
+X/Open defines no error conditions.
+In this implementation
+<B>endwin</B> returns an error if the terminal was not initialized.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that <B>initscr</B> and <B>newterm</B> may be macros.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are described in the XSI Curses standard, Issue 4.  It
+specifies that portable applications must not call <B>initscr</B> more than
+once.
+<P>
+
+Old versions of curses, e.g., BSD 4.4, may have returned a null pointer
+from <B>initscr</B> when an error is detected, rather than exiting.
+It is safe but redundant to check the return value of <B>initscr</B>
+in XSI Curses.
+<P>
+
+If the TERM variable is missing or empty, <B>initscr</B> uses the
+value ``unknown'',
+which normally corresponds to a terminal entry with the <I>generic</I>
+(<I>gn</I>) capability.
+Generic entries are detected by <B><A HREF="/cgi-bin/man/man2html?3X+setupterm">setupterm</A></B>(3X) and cannot be
+used for full-screen operation.
+Other implementations may handle a missing/empty TERM variable differently.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>kernel</B>(3NCURSES),
+<B>refresh</B>(3NCURSES),
+<B>slk</B>(3NCURSES),
+<B>terminfo</B>(3NCURSES),
+<B>util</B>(3NCURSES),
+<B>curses_variables</B>(3NCURSES).
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

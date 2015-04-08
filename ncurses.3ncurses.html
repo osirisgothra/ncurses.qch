@@ -1,0 +1,1379 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of ncurses</TITLE>
+</HEAD><BODY>
+<H1>ncurses</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+
+
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>ncurses</B> - CRT screen handling and optimization package
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The <B>ncurses</B> library routines give the user a terminal-independent method
+of updating character screens with reasonable optimization.
+This implementation is ``new curses'' (ncurses) and
+is the approved replacement for
+4.4BSD classic curses, which has been discontinued.
+This describes <B>ncurses</B>
+version 5.9 (patch 20140118).
+<P>
+
+The <B>ncurses</B> library emulates the curses library of
+System V Release 4 UNIX,
+and XPG4 (X/Open Portability Guide) curses (also known as XSI curses).
+XSI stands for X/Open System Interfaces Extension.
+The <B>ncurses</B> library is freely redistributable in source form.
+Differences from the SVr4
+curses are summarized under the
+<B>EXTENSIONS</B> and <B>PORTABILITY</B> sections below and
+described in detail in the respective
+<B>EXTENSIONS</B>, <B>PORTABILITY</B> and <B>BUGS</B> sections
+of individual man pages.
+<P>
+
+The <B>ncurses</B> library also provides many useful extensions,
+i.e., features which cannot be implemented by a simple add-on library
+but which require access to the internals of the library.
+<P>
+
+A program using these routines must be linked with the <B>-lncurses</B> option,
+or (if it has been generated) with the debugging library <B>-lncurses_g</B>.
+(Your system integrator may also have installed these libraries under
+the names <B>-lcurses</B> and <B>-lcurses_g</B>.)
+The ncurses_g library generates trace logs (in a file called 'trace' in the
+current directory) that describe curses actions.
+See also the section on <B>ALTERNATE CONFIGURATIONS</B>.
+<P>
+
+The <B>ncurses</B> package supports: overall screen, window and pad
+manipulation; output to windows and pads; reading terminal input; control over
+terminal and <B>curses</B> input and output options; environment query
+routines; color manipulation; use of soft label keys; terminfo capabilities;
+and access to low-level terminal-manipulation routines.
+<P>
+
+The library uses the locale which the calling program has initialized.
+That is normally done with <B>setlocale</B>:
+<P>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>setlocale(LC_ALL,&nbsp;&quot;&quot;);</B>
+<P>
+If the locale is not initialized,
+the library assumes that characters are printable as in ISO-8859-1,
+to work with certain legacy programs.
+You should initialize the locale and not rely on specific details of
+the library when the locale has not been setup.
+<P>
+
+The function <B>initscr</B> or <B>newterm</B>
+must be called to initialize the library
+before any of the other routines that deal with windows
+and screens are used.
+The routine <B>endwin</B> must be called before exiting.
+<P>
+
+To get character-at-a-time input without echoing (most
+interactive, screen oriented programs want this), the following
+sequence should be used:
+<P>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>initscr();&nbsp;cbreak();&nbsp;noecho();</B>
+<P>
+Most programs would additionally use the sequence:
+<P>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>nonl();</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>intrflush(stdscr,&nbsp;FALSE);</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>keypad(stdscr,&nbsp;TRUE);</B>
+<P>
+Before a <B>curses</B> program is run, the tab stops of the terminal
+should be set and its initialization strings, if defined, must be output.
+This can be done by executing the <B>tput init</B> command
+after the shell environment variable <B>TERM</B> has been exported.
+<B><A HREF="/cgi-bin/man/man2html?1+tset">tset</A>(1)</B> is usually responsible for doing this.
+[See <B><A HREF="/cgi-bin/man/man2html?5+terminfo">terminfo</A></B>(5) for further details.]
+<P>
+
+The <B>ncurses</B> library permits manipulation of data structures,
+called <I>windows</I>, which can be thought of as two-dimensional
+arrays of characters representing all or part of a CRT screen.
+A default window called <B>stdscr</B>, which is the size of the terminal
+screen, is supplied.
+Others may be created with <B>newwin</B>.
+<P>
+
+Note that <B>curses</B> does not handle overlapping windows, that's done by
+the <B>panel</B>(3CURSES) library.
+This means that you can either use
+<B>stdscr</B> or divide the screen into tiled windows and not using
+<B>stdscr</B> at all.
+Mixing the two will result in unpredictable, and undesired, effects.
+<P>
+
+Windows are referred to by variables declared as <B>WINDOW *</B>.
+These data structures are manipulated with routines described here and
+elsewhere in the <B>ncurses</B> manual pages.
+Among those, the most basic
+routines are <B>move</B> and <B>addch</B>.
+More general versions of
+these routines are included with names beginning with <B>w</B>,
+allowing the user to specify a window.
+The routines not beginning
+with <B>w</B> affect <B>stdscr</B>.
+<P>
+
+After using routines to manipulate a window, <B>refresh</B> is called,
+telling <B>curses</B> to make the user's CRT screen look like
+<B>stdscr</B>.
+The characters in a window are actually of type
+<B>chtype</B>, (character and attribute data) so that other information
+about the character may also be stored with each character.
+<P>
+
+Special windows called <I>pads</I> may also be manipulated.
+These are windows
+which are not constrained to the size of the screen and whose contents need not
+be completely displayed.
+See <B>pad</B>(3NCURSES) for more information.
+<P>
+
+In addition to drawing characters on the screen, video attributes and colors
+may be supported, causing the characters to show up in such modes as
+underlined, in reverse video, or in color on terminals that support such
+display enhancements.
+Line drawing characters may be specified to be output.
+On input, <B>curses</B> is also able to translate arrow and function keys that
+transmit escape sequences into single values.
+The video attributes, line
+drawing characters, and input values use names, defined in <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>,
+such as <B>A_REVERSE</B>, <B>ACS_HLINE</B>, and <B>KEY_LEFT</B>.
+<P>
+
+If the environment variables <B>LINES</B> and <B>COLUMNS</B> are set, or if the
+program is executing in a window environment, line and column information in
+the environment will override information read by <I>terminfo</I>.
+This would affect a program running in an AT&amp;T 630 layer,
+for example, where the size of a
+screen is changeable (see <B>ENVIRONMENT</B>).
+<P>
+
+If the environment variable <B>TERMINFO</B> is defined, any program using
+<B>curses</B> checks for a local terminal definition before checking in the
+standard place.
+For example, if <B>TERM</B> is set to <B>att4424</B>, then the
+compiled terminal definition is found in
+<P>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>/etc/terminfo/a/att4424</B>.
+<P>
+(The <B>a</B> is copied from the first letter of <B>att4424</B> to avoid
+creation of huge directories.)  However, if <B>TERMINFO</B> is set to
+<B>$HOME/myterms</B>, <B>curses</B> first checks
+<P>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>$HOME/myterms/a/att4424</B>,
+<P>
+and if that fails, it then checks
+<P>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>/etc/terminfo/a/att4424</B>.
+<P>
+This is useful for developing experimental definitions or when write
+permission in <B>/etc/terminfo</B> is not available.
+<P>
+
+The integer variables <B>LINES</B> and <B>COLS</B> are defined in
+<B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B> and will be filled in by <B>initscr</B> with the size of the
+screen.
+The constants <B>TRUE</B> and <B>FALSE</B> have the values <B>1</B> and
+<B>0</B>, respectively.
+<P>
+
+The <B>curses</B> routines also define the <B>WINDOW *</B> variable <B>curscr</B>
+which is used for certain low-level operations like clearing and redrawing a
+screen containing garbage.
+The <B>curscr</B> can be used in only a few routines.
+
+<A NAME="lbAE">&nbsp;</A>
+<H3>Routine and Argument Names</H3>
+
+Many <B>curses</B> routines have two or more versions.
+The routines prefixed with <B>w</B> require a window argument.
+The routines prefixed with <B>p</B> require a pad argument.
+Those without a prefix generally use <B>stdscr</B>.
+<P>
+
+The routines prefixed with <B>mv</B> require a <I>y</I> and <I>x</I>
+coordinate to move to before performing the appropriate action.
+The <B>mv</B> routines imply a call to <B>move</B> before the call to the
+other routine.
+The coordinate <I>y</I> always refers to the row (of
+the window), and <I>x</I> always refers to the column.
+The upper left-hand corner is always (0,0), not (1,1).
+<P>
+
+The routines prefixed with <B>mvw</B> take both a window argument and
+<I>x</I> and <I>y</I> coordinates.
+The window argument is always specified before the coordinates.
+<P>
+
+In each case, <I>win</I> is the window affected, and <I>pad</I> is the
+pad affected; <I>win</I> and <I>pad</I> are always pointers to type
+<B>WINDOW</B>.
+<P>
+
+Option setting routines require a Boolean flag <I>bf</I> with the value
+<B>TRUE</B> or <B>FALSE</B>; <I>bf</I> is always of type <B>bool</B>.
+Most of the data types used in the library routines,
+such as <B>WINDOW</B>, <B>SCREEN</B>, <B>bool</B>, and <B>chtype</B>
+are defined in <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>.
+Types used for the terminfo routines such as
+<B>TERMINAL</B> are defined in <B>&lt;<A HREF="file:///usr/include/term.h">term.h</A>&gt;</B>.
+<P>
+
+This manual page describes functions which may appear in any configuration
+of the library.
+There are two common configurations of the library:
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT>ncurses<DD>
+the &quot;normal&quot; library, which handles 8-bit characters.
+The normal (8-bit) library stores characters combined with attributes
+in <B>chtype</B> data.
+<DT><DD>
+Attributes alone (no corresponding character) may be stored in <B>chtype</B>
+or the equivalent <B>attr_t</B> data.
+In either case, the data is stored in something like an integer.
+<DT><DD>
+Each cell (row and column) in a <B>WINDOW</B> is stored as a <B>chtype</B>.
+<DT>ncursesw<DD>
+the so-called &quot;wide&quot; library, which handles multibyte characters
+(see the section on <B>ALTERNATE CONFIGURATIONS</B>).
+The &quot;wide&quot; library includes all of the calls from the &quot;normal&quot; library.
+It adds about one third more calls using data types which store
+multibyte characters:
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>cchar_t</B>
+
+<DD>
+corresponds to <B>chtype</B>.
+However it is a structure, because more data is stored than can fit into
+an integer.
+The characters are large enough to require a full integer value - and there
+may be more than one character per cell.
+The video attributes and color are stored in separate fields of the structure.
+<DT><DD>
+Each cell (row and column) in a <B>WINDOW</B> is stored as a <B>cchar_t</B>.
+<DT><B>wchar_t</B>
+
+<DD>
+stores a &quot;wide&quot; character.
+Like <B>chtype</B>, this may be an integer.
+<DT><B>wint_t</B>
+
+<DD>
+stores a <B>wchar_t</B> or <B>WEOF</B> - not the same, though both may have
+the same size.
+</DL>
+</DL>
+
+<DT><DD>
+The &quot;wide&quot; library provides new functions which are analogous to
+functions in the &quot;normal&quot; library.
+There is a naming convention which relates many of the normal/wide variants:
+a &quot;_w&quot; is inserted into the name.
+For example, <B>waddch</B> becomes <B>wadd_wch</B>.
+</DL>
+</DL>
+
+<P>
+
+
+<A NAME="lbAF">&nbsp;</A>
+<H3>Routine Name Index</H3>
+
+The following table lists each <B>curses</B> routine and the name of
+the manual page on which it is described.
+Routines flagged with `*'
+are ncurses-specific, not described by XPG4 or present in SVr4.
+<P>
+
+<CENTER><TABLE>
+<TR VALIGN=top><TD><B>curses</B> Routine Name</TD><TD>Manual Page Name<BR></TD></TR>
+<TR VALIGN=top><TD COLSPAN=2><HR><HR></TD></TR>
+<TR VALIGN=top><TD>COLOR_PAIR</TD><TD><B>color</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>PAIR_NUMBER</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>_nc_free_and_exit</TD><TD><B>memleaks</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_nc_freeall</TD><TD><B>memleaks</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_nc_tracebits</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_traceattr</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_traceattr2</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_tracechar</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_tracechtype</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_tracechtype2</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_tracedump</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_tracef</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>_tracemouse</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>add_wch</TD><TD><B>add_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>add_wchnstr</TD><TD><B>add_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>add_wchstr</TD><TD><B>add_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>addch</TD><TD><B>addch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>addchnstr</TD><TD><B>addchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>addchstr</TD><TD><B>addchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>addnstr</TD><TD><B>addstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>addnwstr</TD><TD><B>addwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>addstr</TD><TD><B>addstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>addwstr</TD><TD><B>addwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>assume_default_colors</TD><TD><B>default_colors</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>attr_get</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>attr_off</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>attr_on</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>attr_set</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>attroff</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>attron</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>attrset</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>baudrate</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>beep</TD><TD><B>beep</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>bkgd</TD><TD><B>bkgd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>bkgdset</TD><TD><B>bkgd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>bkgrnd</TD><TD><B>bkgrnd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>bkgrndset</TD><TD><B>bkgrnd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>border</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>border_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>box</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>box_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>can_change_color</TD><TD><B>color</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>cbreak</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>chgat</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>clear</TD><TD><B>clear</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>clearok</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>clrtobot</TD><TD><B>clear</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>clrtoeol</TD><TD><B>clear</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>color_content</TD><TD><B>color</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>color_set</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>copywin</TD><TD><B>overlay</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>curs_set</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>curses_version</TD><TD><B>extensions</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>def_prog_mode</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>def_shell_mode</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>define_key</TD><TD><B>define_key</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>del_curterm</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>delay_output</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>delch</TD><TD><B>delch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>deleteln</TD><TD><B>deleteln</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>delscreen</TD><TD><B>initscr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>delwin</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>derwin</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>doupdate</TD><TD><B>refresh</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>dupwin</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>echo</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>echo_wchar</TD><TD><B>add_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>echochar</TD><TD><B>addch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>endwin</TD><TD><B>initscr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>erase</TD><TD><B>clear</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>erasechar</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>erasewchar</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>filter</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>flash</TD><TD><B>beep</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>flushinp</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>get_wch</TD><TD><B>get_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>get_wstr</TD><TD><B>get_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getattrs</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getbegx</TD><TD><B>legacy</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getbegy</TD><TD><B>legacy</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getbegyx</TD><TD><B>getyx</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getbkgd</TD><TD><B>bkgd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getbkgrnd</TD><TD><B>bkgrnd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getcchar</TD><TD><B>getcchar</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getch</TD><TD><B>getch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getcurx</TD><TD><B>legacy</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getcury</TD><TD><B>legacy</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getmaxx</TD><TD><B>legacy</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getmaxy</TD><TD><B>legacy</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getmaxyx</TD><TD><B>getyx</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getmouse</TD><TD><B>mouse</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getn_wstr</TD><TD><B>get_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getnstr</TD><TD><B>getstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getparx</TD><TD><B>legacy</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getpary</TD><TD><B>legacy</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>getparyx</TD><TD><B>getyx</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getstr</TD><TD><B>getstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getsyx</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getwin</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>getyx</TD><TD><B>getyx</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>halfdelay</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>has_colors</TD><TD><B>color</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>has_ic</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>has_il</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>has_key</TD><TD><B>getch</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>hline</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>hline_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>idcok</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>idlok</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>immedok</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>in_wch</TD><TD><B>in_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>in_wchnstr</TD><TD><B>in_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>in_wchstr</TD><TD><B>in_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>inch</TD><TD><B>inch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>inchnstr</TD><TD><B>inchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>inchstr</TD><TD><B>inchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>init_color</TD><TD><B>color</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>init_pair</TD><TD><B>color</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>initscr</TD><TD><B>initscr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>innstr</TD><TD><B>instr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>innwstr</TD><TD><B>inwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>ins_nwstr</TD><TD><B>ins_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>ins_wch</TD><TD><B>ins_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>ins_wstr</TD><TD><B>ins_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>insch</TD><TD><B>insch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>insdelln</TD><TD><B>deleteln</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>insertln</TD><TD><B>deleteln</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>insnstr</TD><TD><B>insstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>insstr</TD><TD><B>insstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>instr</TD><TD><B>instr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>intrflush</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>inwstr</TD><TD><B>inwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>is_cleared</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_idcok</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_idlok</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_immedok</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_keypad</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_leaveok</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_linetouched</TD><TD><B>touch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>is_nodelay</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_notimeout</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_scrollok</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_syncok</TD><TD><B>opaque</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_term_resized</TD><TD><B>resizeterm</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>is_wintouched</TD><TD><B>touch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>isendwin</TD><TD><B>initscr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>key_defined</TD><TD><B>key_defined</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>key_name</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>keybound</TD><TD><B>keybound</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>keyname</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>keyok</TD><TD><B>keyok</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>keypad</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>killchar</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>killwchar</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>leaveok</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>longname</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mcprint</TD><TD><B>print</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>meta</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mouse_trafo</TD><TD><B>mouse</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>mouseinterval</TD><TD><B>mouse</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>mousemask</TD><TD><B>mouse</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>move</TD><TD><B>move</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvadd_wch</TD><TD><B>add_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvadd_wchnstr</TD><TD><B>add_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvadd_wchstr</TD><TD><B>add_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddch</TD><TD><B>addch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddchnstr</TD><TD><B>addchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddchstr</TD><TD><B>addchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddnstr</TD><TD><B>addstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddnwstr</TD><TD><B>addwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddstr</TD><TD><B>addstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvaddwstr</TD><TD><B>addwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvchgat</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvcur</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvdelch</TD><TD><B>delch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvderwin</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvget_wch</TD><TD><B>get_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvget_wstr</TD><TD><B>get_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvgetch</TD><TD><B>getch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvgetn_wstr</TD><TD><B>get_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvgetnstr</TD><TD><B>getstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvgetstr</TD><TD><B>getstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvhline</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvhline_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvin_wch</TD><TD><B>in_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvin_wchnstr</TD><TD><B>in_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvin_wchstr</TD><TD><B>in_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinch</TD><TD><B>inch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinchnstr</TD><TD><B>inchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinchstr</TD><TD><B>inchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinnstr</TD><TD><B>instr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinnwstr</TD><TD><B>inwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvins_nwstr</TD><TD><B>ins_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvins_wch</TD><TD><B>ins_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvins_wstr</TD><TD><B>ins_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinsch</TD><TD><B>insch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinsnstr</TD><TD><B>insstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinsstr</TD><TD><B>insstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinstr</TD><TD><B>instr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvinwstr</TD><TD><B>inwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvprintw</TD><TD><B>printw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvscanw</TD><TD><B>scanw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvvline</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvvline_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwadd_wch</TD><TD><B>add_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwadd_wchnstr</TD><TD><B>add_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwadd_wchstr</TD><TD><B>add_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddch</TD><TD><B>addch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddchnstr</TD><TD><B>addchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddchstr</TD><TD><B>addchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddnstr</TD><TD><B>addstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddnwstr</TD><TD><B>addwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddstr</TD><TD><B>addstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwaddwstr</TD><TD><B>addwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwchgat</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwdelch</TD><TD><B>delch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwget_wch</TD><TD><B>get_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwget_wstr</TD><TD><B>get_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwgetch</TD><TD><B>getch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwgetn_wstr</TD><TD><B>get_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwgetnstr</TD><TD><B>getstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwgetstr</TD><TD><B>getstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwhline</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwhline_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwin</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwin_wch</TD><TD><B>in_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwin_wchnstr</TD><TD><B>in_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwin_wchstr</TD><TD><B>in_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinch</TD><TD><B>inch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinchnstr</TD><TD><B>inchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinchstr</TD><TD><B>inchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinnstr</TD><TD><B>instr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinnwstr</TD><TD><B>inwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwins_nwstr</TD><TD><B>ins_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwins_wch</TD><TD><B>ins_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwins_wstr</TD><TD><B>ins_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinsch</TD><TD><B>insch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinsnstr</TD><TD><B>insstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinsstr</TD><TD><B>insstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinstr</TD><TD><B>instr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwinwstr</TD><TD><B>inwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwprintw</TD><TD><B>printw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwscanw</TD><TD><B>scanw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwvline</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>mvwvline_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>napms</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>newpad</TD><TD><B>pad</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>newterm</TD><TD><B>initscr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>newwin</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>nl</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>nocbreak</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>nodelay</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>noecho</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>nofilter</TD><TD><B>util</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>nonl</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>noqiflush</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>noraw</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>notimeout</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>overlay</TD><TD><B>overlay</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>overwrite</TD><TD><B>overlay</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>pair_content</TD><TD><B>color</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>pechochar</TD><TD><B>pad</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>pnoutrefresh</TD><TD><B>pad</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>prefresh</TD><TD><B>pad</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>printw</TD><TD><B>printw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>putp</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>putwin</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>qiflush</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>raw</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>redrawwin</TD><TD><B>refresh</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>refresh</TD><TD><B>refresh</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>reset_prog_mode</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>reset_shell_mode</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>resetty</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>resizeterm</TD><TD><B>resizeterm</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>restartterm</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>ripoffline</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>savetty</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>scanw</TD><TD><B>scanw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>scr_dump</TD><TD><B>scr_dump</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>scr_init</TD><TD><B>scr_dump</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>scr_restore</TD><TD><B>scr_dump</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>scr_set</TD><TD><B>scr_dump</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>scrl</TD><TD><B>scroll</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>scroll</TD><TD><B>scroll</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>scrollok</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>set_curterm</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>set_term</TD><TD><B>initscr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>setcchar</TD><TD><B>getcchar</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>setscrreg</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>setsyx</TD><TD><B>kernel</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>setterm</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>setupterm</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attr</TD><TD><B>slk</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attr_off</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attr_on</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attr_set</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attroff</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attron</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_attrset</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_clear</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_color</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_init</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_label</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_noutrefresh</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_refresh</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_restore</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_set</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>slk_touch</TD><TD><B>slk</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>standend</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>standout</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>start_color</TD><TD><B>color</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>subpad</TD><TD><B>pad</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>subwin</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>syncok</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>term_attrs</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>termattrs</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>termname</TD><TD><B>termattrs</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tgetent</TD><TD><B>termcap</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tgetflag</TD><TD><B>termcap</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tgetnum</TD><TD><B>termcap</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tgetstr</TD><TD><B>termcap</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tgoto</TD><TD><B>termcap</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tigetflag</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tigetnum</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tigetstr</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>timeout</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>touchline</TD><TD><B>touch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>touchwin</TD><TD><B>touch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tparm</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tputs</TD><TD><B>termcap</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>tputs</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>trace</TD><TD><B>trace</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>typeahead</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>unctrl</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>unget_wch</TD><TD><B>get_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>ungetch</TD><TD><B>getch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>ungetmouse</TD><TD><B>mouse</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>untouchwin</TD><TD><B>touch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>use_default_colors</TD><TD><B>default_colors</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>use_env</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>use_extended_names</TD><TD><B>extensions</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>use_legacy_coding</TD><TD><B>legacy_coding</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>use_tioctl</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vid_attr</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vid_puts</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vidattr</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vidputs</TD><TD><B>terminfo</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vline</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vline_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vw_printw</TD><TD><B>printw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vw_scanw</TD><TD><B>scanw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vwprintw</TD><TD><B>printw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>vwscanw</TD><TD><B>scanw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wadd_wch</TD><TD><B>add_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wadd_wchnstr</TD><TD><B>add_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wadd_wchstr</TD><TD><B>add_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>waddch</TD><TD><B>addch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>waddchnstr</TD><TD><B>addchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>waddchstr</TD><TD><B>addchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>waddnstr</TD><TD><B>addstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>waddnwstr</TD><TD><B>addwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>waddstr</TD><TD><B>addstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>waddwstr</TD><TD><B>addwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wattr_get</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wattr_off</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wattr_on</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wattr_set</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wattroff</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wattron</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wattrset</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wbkgd</TD><TD><B>bkgd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wbkgdset</TD><TD><B>bkgd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wbkgrnd</TD><TD><B>bkgrnd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wbkgrndset</TD><TD><B>bkgrnd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wborder</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wborder_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wchgat</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wclear</TD><TD><B>clear</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wclrtobot</TD><TD><B>clear</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wclrtoeol</TD><TD><B>clear</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wcolor_set</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wcursyncup</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wdelch</TD><TD><B>delch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wdeleteln</TD><TD><B>deleteln</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wecho_wchar</TD><TD><B>add_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wechochar</TD><TD><B>addch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wenclose</TD><TD><B>mouse</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>werase</TD><TD><B>clear</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wget_wch</TD><TD><B>get_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wget_wstr</TD><TD><B>get_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetbkgrnd</TD><TD><B>bkgrnd</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetch</TD><TD><B>getch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetn_wstr</TD><TD><B>get_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetnstr</TD><TD><B>getstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wgetstr</TD><TD><B>getstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>whline</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>whline_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>win_wch</TD><TD><B>in_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>win_wchnstr</TD><TD><B>in_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>win_wchstr</TD><TD><B>in_wchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winch</TD><TD><B>inch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winchnstr</TD><TD><B>inchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winchstr</TD><TD><B>inchstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winnstr</TD><TD><B>instr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winnwstr</TD><TD><B>inwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wins_nwstr</TD><TD><B>ins_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wins_wch</TD><TD><B>ins_wch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wins_wstr</TD><TD><B>ins_wstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winsch</TD><TD><B>insch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winsdelln</TD><TD><B>deleteln</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winsertln</TD><TD><B>deleteln</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winsnstr</TD><TD><B>insstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winsstr</TD><TD><B>insstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winstr</TD><TD><B>instr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>winwstr</TD><TD><B>inwstr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wmouse_trafo</TD><TD><B>mouse</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>wmove</TD><TD><B>move</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wnoutrefresh</TD><TD><B>refresh</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wprintw</TD><TD><B>printw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wredrawln</TD><TD><B>refresh</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wrefresh</TD><TD><B>refresh</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wresize</TD><TD><B>wresize</B>(3NCURSES)*<BR></TD></TR>
+<TR VALIGN=top><TD>wscanw</TD><TD><B>scanw</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wscrl</TD><TD><B>scroll</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wsetscrreg</TD><TD><B>outopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wstandend</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wstandout</TD><TD><B>attr</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wsyncdown</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wsyncup</TD><TD><B>window</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wtimeout</TD><TD><B>inopts</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wtouchln</TD><TD><B>touch</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wunctrl</TD><TD><B>util</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wvline</TD><TD><B>border</B>(3NCURSES)<BR></TD></TR>
+<TR VALIGN=top><TD>wvline_set</TD><TD><B>border_set</B>(3NCURSES)<BR></TD></TR>
+</TABLE></CENTER>
+
+<A NAME="lbAG">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+Routines that return an integer return <B>ERR</B> upon failure and an
+integer value other than <B>ERR</B> upon successful completion, unless
+otherwise noted in the routine descriptions.
+<P>
+
+As a general rule, routines check for null pointers passed as parameters,
+and handle this as an error.
+<P>
+
+All macros return the value of the <B>w</B> version, except <B>setscrreg</B>,
+<B>wsetscrreg</B>, <B>getyx</B>, <B>getbegyx</B>, and <B>getmaxyx</B>.
+The return values of
+<B>setscrreg</B>,
+<B>wsetscrreg</B>,
+<B>getyx</B>,
+<B>getbegyx</B>, and
+<B>getmaxyx</B> are undefined (i.e., these should not be used as the
+right-hand side of assignment statements).
+<P>
+
+Routines that return pointers return <B>NULL</B> on error.
+<A NAME="lbAH">&nbsp;</A>
+<H2>ENVIRONMENT</H2>
+
+The following environment symbols are useful for customizing the
+runtime behavior of the <B>ncurses</B> library.
+The most important ones have been already discussed in detail.
+<DL COMPACT>
+<DT>BAUDRATE<DD>
+The debugging library checks this environment variable when the application
+has redirected output to a file.
+The variable's numeric value is used for the baudrate.
+If no value is found, <B>ncurses</B> uses 9600.
+This allows testers to construct repeatable test-cases
+that take into account costs that depend on baudrate.
+<DT>CC<DD>
+When set, change occurrences of the command_character
+(i.e., the <B>cmdch</B> capability)
+of the loaded terminfo entries to the value of this variable.
+Very few terminfo entries provide this feature.
+<DT><DD>
+Because this name is also used in development environments to represent
+the C compiler's name, <B>ncurses</B> ignores it if it does not happen to
+be a single character.
+<DT>COLUMNS<DD>
+Specify the width of the screen in characters.
+Applications running in a windowing environment usually are able to
+obtain the width of the window in which they are executing.
+If neither the <B>COLUMNS</B> value nor the terminal's screen size is available,
+<B>ncurses</B> uses the size which may be specified in the terminfo database
+(i.e., the <B>cols</B> capability).
+<DT><DD>
+It is important that your application use a correct size for the screen.
+This is not always possible because your application may be
+running on a host which does not honor NAWS (Negotiations About Window
+Size), or because you are temporarily running as another user.
+However, setting <B>COLUMNS</B> and/or <B>LINES</B> overrides the library's
+use of the screen size obtained from the operating system.
+<DT><DD>
+Either <B>COLUMNS</B> or <B>LINES</B> symbols may be specified independently.
+This is mainly useful to circumvent legacy misfeatures of terminal descriptions,
+e.g., xterm which commonly specifies a 65 line screen.
+For best results, <B>lines</B> and <B>cols</B> should not be specified in
+a terminal description for terminals which are run as emulations.
+<DT><DD>
+Use the <B>use_env</B> function to disable all use of external environment
+(but not including system calls) to determine the screen size.
+Use the <B>use_tioctl</B> function to update <B>COLUMNS</B> or <B>LINES</B>
+to match the screen size obtained from system calls or the terminal database.
+<DT>ESCDELAY<DD>
+Specifies the total time, in milliseconds, for which ncurses will
+await a character sequence, e.g., a function key.
+The default value, 1000 milliseconds, is enough for most uses.
+However, it is made a variable to accommodate unusual applications.
+<DT><DD>
+The most common instance where you may wish to change this value
+is to work with slow hosts, e.g., running on a network.
+If the host cannot read characters rapidly enough, it will have the same
+effect as if the terminal did not send characters rapidly enough.
+The library will still see a timeout.
+<DT><DD>
+Note that xterm mouse events are built up from character sequences
+received from the xterm.
+If your application makes heavy use of multiple-clicking, you may
+wish to lengthen this default value because the timeout applies
+to the composed multi-click event as well as the individual clicks.
+<DT><DD>
+In addition to the environment variable,
+this implementation provides a global variable with the same name.
+Portable applications should not rely upon the presence of ESCDELAY
+in either form,
+but setting the environment variable rather than the global variable
+does not create problems when compiling an application.
+<DT>HOME<DD>
+Tells <B>ncurses</B> where your home directory is.
+That is where it may read and write auxiliary terminal descriptions:
+<DT><DD>
+$HOME/.termcap
+<BR>
+
+$HOME/.terminfo
+<DT>LINES<DD>
+Like COLUMNS, specify the height of the screen in characters.
+See COLUMNS for a detailed description.
+<DT>MOUSE_BUTTONS_123<DD>
+This applies only to the OS/2 EMX port.
+It specifies the order of buttons on the mouse.
+OS/2 numbers a 3-button mouse inconsistently from other
+platforms:
+<P>
+1 = left
+<BR>
+
+2 = right
+<BR>
+
+3 = middle.
+<P>
+This variable lets you customize the mouse.
+The variable must be three numeric digits 1-3 in any order, e.g., 123 or 321.
+If it is not specified, <B>ncurses</B> uses 132.
+<DT>NCURSES_ASSUMED_COLORS<DD>
+Override the compiled-in assumption that the
+terminal's default colors are white-on-black
+(see <B>default_colors</B>(3NCURSES)).
+You may set the foreground and background color values with this environment
+variable by proving a 2-element list: foreground,background.
+For example, to tell ncurses to not assume anything
+about the colors, set this to &quot;-1,-1&quot;.
+To make it green-on-black, set it to &quot;2,0&quot;.
+Any positive value from zero to the terminfo <B>max_colors</B> value is allowed.
+<DT>NCURSES_GPM_TERMS<DD>
+This applies only to ncurses configured to use the GPM interface.
+<DT><DD>
+If present,
+the environment variable is a list of one or more terminal names
+against which the TERM environment variable is matched.
+Setting it to an empty value disables the GPM interface;
+using the built-in support for xterm, etc.
+<DT><DD>
+If the environment variable is absent,
+ncurses will attempt to open GPM if TERM contains &quot;linux&quot;.
+<DT>NCURSES_NO_HARD_TABS<DD>
+<B>Ncurses</B> may use tabs as part of the cursor movement optimization.
+In some cases,
+your terminal driver may not handle these properly.
+Set this environment variable to disable the feature.
+You can also adjust your <B>stty</B> settings to avoid the problem.
+<DT>NCURSES_NO_MAGIC_COOKIES<DD>
+Some terminals use a magic-cookie feature which requires special handling
+to make highlighting and other video attributes display properly.
+You can suppress the highlighting entirely for these terminals by
+setting this environment variable.
+<DT>NCURSES_NO_PADDING<DD>
+Most of the terminal descriptions in the terminfo database are written
+for real &quot;hardware&quot; terminals.
+Many people use terminal emulators
+which run in a windowing environment and use curses-based applications.
+Terminal emulators can duplicate
+all of the important aspects of a hardware terminal, but they do not
+have the same limitations.
+The chief limitation of a hardware terminal from the standpoint
+of your application is the management of dataflow, i.e., timing.
+Unless a hardware terminal is interfaced into a terminal concentrator
+(which does flow control),
+it (or your application) must manage dataflow, preventing overruns.
+The cheapest solution (no hardware cost)
+is for your program to do this by pausing after
+operations that the terminal does slowly, such as clearing the display.
+<DT><DD>
+As a result, many terminal descriptions (including the vt100)
+have delay times embedded.
+You may wish to use these descriptions,
+but not want to pay the performance penalty.
+<DT><DD>
+Set the NCURSES_NO_PADDING environment variable to disable all but mandatory
+padding.
+Mandatory padding is used as a part of special control
+sequences such as <I>flash</I>.
+<DT>NCURSES_NO_SETBUF<DD>
+This setting is obsolete.
+Before changes
+<DL COMPACT><DT><DD>
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+started with 5.9 patch 20120825 
+and
+
+<DT>&bull;<DD>
+
+continued
+though 5.9 patch 20130126
+</DL>
+</DL>
+
+<DT><DD>
+<B>ncurses</B> enabled buffered output during terminal initialization.
+This was done (as in SVr4 curses) for performance reasons.
+For testing purposes, both of <B>ncurses</B> and certain applications,
+this feature was made optional.
+Setting the NCURSES_NO_SETBUF variable
+disabled output buffering, leaving the output in the original (usually
+line buffered) mode.
+<DT><DD>
+In the current implementation,
+ncurses performs its own buffering and does not require this workaround.
+It does not modify the buffering of the standard output.
+<DT><DD>
+The reason for the change was to make the behavior for interrupts and
+other signals more robust.
+One drawback is that certain nonconventional programs would mix
+ordinary stdio calls with ncurses calls and (usually) work.
+This is no longer possible since ncurses is not using
+the buffered standard output but its own output (to the same file descriptor).
+As a special case, the low-level calls such as <B>putp</B> still use the
+standard output.
+But high-level curses calls do not.
+<DT>NCURSES_NO_UTF8_ACS<DD>
+During initialization, the <B>ncurses</B> library
+checks for special cases where VT100 line-drawing (and the corresponding
+alternate character set capabilities) described in the terminfo are known
+to be missing.
+Specifically, when running in a UTF-8 locale,
+the Linux console emulator and the GNU screen program ignore these.
+Ncurses checks the TERM environment variable for these.
+For other special cases, you should set this environment variable.
+Doing this tells ncurses to use Unicode values which correspond to
+the VT100 line-drawing glyphs.
+That works for the special cases cited,
+and is likely to work for terminal emulators.
+<DT><DD>
+When setting this variable, you should set it to a nonzero value.
+Setting it to zero (or to a nonnumber)
+disables the special check for &quot;linux&quot; and &quot;screen&quot;.
+<DT><DD>
+As an alternative to the environment variable,
+ncurses checks for an extended terminfo capability <B>U8</B>.
+This is a numeric capability which can be compiled using <B>tic&nbsp;-x</B>.
+For example
+<DL COMPACT><DT><DD>
+
+<P>
+<PRE>
+# linux console, if patched to provide working
+# VT100 shift-in/shift-out, with corresponding font.
+linux-vt100|linux console with VT100 line-graphics,
+        U8#0, use=linux,
+
+# uxterm with vt100Graphics resource set to false
+xterm-utf8|xterm relying on UTF-8 line-graphics,
+        U8#1, use=xterm,
+</PRE>
+
+
+</DL>
+
+<DT><DD>
+The name &quot;U8&quot; is chosen to be two characters,
+to permit it to be used by applications that use ncurses'
+termcap interface.
+<DT>NCURSES_TRACE<DD>
+During initialization, the <B>ncurses</B> debugging library
+checks the NCURSES_TRACE environment variable.
+If it is defined, to a numeric value, <B>ncurses</B> calls the <B>trace</B>
+function, using that value as the argument.
+<DT><DD>
+The argument values, which are defined in <B>curses.h</B>, provide several
+types of information.
+When running with traces enabled, your application will write the
+file <B>trace</B> to the current directory.
+<DT>TERM<DD>
+Denotes your terminal type.
+Each terminal type is distinct, though many are similar.
+<DT>TERMCAP<DD>
+If the <B>ncurses</B> library has been configured with <I>termcap</I>
+support, <B>ncurses</B> will check for a terminal's description in
+termcap form if it is not available in the terminfo database.
+<DT><DD>
+The TERMCAP environment variable contains either a terminal description (with
+newlines stripped out),
+or a file name telling where the information denoted by
+the TERM environment variable exists.
+In either case, setting it directs <B>ncurses</B> to ignore
+the usual place for this information, e.g., /etc/termcap.
+<DT>TERMINFO<DD>
+Overrides the directory in which <B>ncurses</B> searches for your terminal
+description.
+This is the simplest, but not the only way to change the list of directories.
+The complete list of directories in order follows:
+<DL COMPACT><DT><DD>
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+the last directory to which <B>ncurses</B> wrote, if any, is searched first
+
+<DT>&bull;<DD>
+
+the directory specified by the TERMINFO environment variable
+
+<DT>&bull;<DD>
+
+$HOME/.terminfo
+
+<DT>&bull;<DD>
+
+directories listed in the TERMINFO_DIRS environment variable
+
+<DT>&bull;<DD>
+
+one or more directories whose names are configured and compiled into the
+ncurses library, i.e.,
+<DL COMPACT><DT><DD>
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+no default value (corresponding to the TERMINFO_DIRS variable)
+
+<DT>&bull;<DD>
+
+/etc/terminfo (corresponding to the TERMINFO variable)
+</DL>
+</DL>
+
+</DL>
+</DL>
+
+<DT>TERMINFO_DIRS<DD>
+Specifies a list of directories to search for terminal descriptions.
+The list is separated by colons (i.e., &quot;:&quot;) on Unix, semicolons on OS/2 EMX.
+<DT><DD>
+All of the terminal descriptions are in terminfo form.
+Normally these are stored in a directory tree,
+using subdirectories named by the first letter of the terminal names therein.
+<DT><DD>
+If <B>ncurses</B> is built with a hashed database,
+then each entry in this list can also be the path of the corresponding
+database file.
+<DT><DD>
+If <B>ncurses</B> is built with a support for reading termcap files
+directly, then an entry in this list may be the path of a termcap file.
+<DT>TERMPATH<DD>
+If TERMCAP does not hold a file name then <B>ncurses</B> checks
+the TERMPATH environment variable.
+This is a list of filenames separated by spaces or colons (i.e., &quot;:&quot;) on Unix,
+semicolons on OS/2 EMX.
+<DT><DD>
+If the TERMPATH environment variable is not set,
+<B>ncurses</B> looks in the files
+/etc/termcap, /usr/share/misc/termcap and $HOME/.termcap, in that order.
+</DL>
+<P>
+
+The library may be configured to disregard the following variables when the
+current user is the superuser (root), or if the application uses setuid or
+setgid permissions:
+<DL COMPACT>
+<DT><DD>
+$TERMINFO, $TERMINFO_DIRS, $TERMPATH, as well as $HOME.
+</DL>
+<A NAME="lbAI">&nbsp;</A>
+<H2>ALTERNATE CONFIGURATIONS</H2>
+
+Several different configurations are possible,
+depending on the configure script options used when building <B>ncurses</B>.
+There are a few main options whose effects are visible to the applications
+developer using <B>ncurses</B>:
+<DL COMPACT>
+<DT>--disable-overwrite<DD>
+The standard include for <B>ncurses</B> is as noted in <B>SYNOPSIS</B>:
+<DL COMPACT><DT><DD>
+<P>
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+</DL>
+
+<DT><DD>
+This option is used to avoid filename conflicts when <B>ncurses</B>
+is not the main implementation of curses of the computer.
+If <B>ncurses</B> is installed disabling overwrite, it puts its headers in
+a subdirectory, e.g.,
+<DL COMPACT><DT><DD>
+<P>
+<B>#include &lt;<A HREF="file:///usr/include/ncurses/curses.h">ncurses/curses.h</A>&gt;</B>
+</DL>
+
+<DT><DD>
+It also omits a symbolic link which would allow you to use <B>-lcurses</B>
+to build executables.
+<DT>--enable-widec<DD>
+The configure script renames the library and
+(if the <B>--disable-overwrite</B> option is used)
+puts the header files in a different subdirectory.
+All of the library names have a &quot;w&quot; appended to them,
+i.e., instead of
+<DL COMPACT><DT><DD>
+<P>
+<B>-lncurses</B>
+</DL>
+
+<DT><DD>
+you link with
+<DL COMPACT><DT><DD>
+<P>
+<B>-lncursesw</B>
+</DL>
+
+<DT><DD>
+You must also define <B>_XOPEN_SOURCE_EXTENDED</B> when compiling for the
+wide-character library to use the extended (wide-character) functions.
+The <B>curses.h</B> file which is installed for the wide-character
+library is designed to be compatible with the normal library's header.
+Only the size of the <B>WINDOW</B> structure differs, and very few
+applications require more than a pointer to <B>WINDOW</B>s.
+If the headers are installed allowing overwrite,
+the wide-character library's headers should be installed last,
+to allow applications to be built using either library
+from the same set of headers.
+<DT>--with-shared<DD>
+<DT>--with-normal<DD>
+<DT>--with-debug<DD>
+<DT>--with-profile<DD>
+The shared and normal (static) library names differ by their suffixes,
+e.g., <B>libncurses.so</B> and <B>libncurses.a</B>.
+The debug and profiling libraries add a &quot;_g&quot; and a &quot;_p&quot; to the root
+names respectively,
+e.g., <B>libncurses_g.a</B> and <B>libncurses_p.a</B>.
+<DT>--with-trace<DD>
+The <B>trace</B> function normally resides in the debug library,
+but it is sometimes useful to configure this in the shared library.
+Configure scripts should check for the function's existence rather
+than assuming it is always in the debug library.
+</DL>
+<A NAME="lbAJ">&nbsp;</A>
+<H2>FILES</H2>
+
+<DL COMPACT>
+<DT>/usr/share/tabset<DD>
+directory containing initialization files for the terminal capability database
+/etc/terminfo
+terminal capability database
+</DL>
+<A NAME="lbAK">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B><A HREF="/cgi-bin/man/man2html?5+terminfo">terminfo</A></B>(5) and related pages whose names begin
+&quot;curs_&quot; for detailed routine descriptions.
+<BR>
+
+<B>curses_variables</B>(3NCURSES) 
+<A NAME="lbAL">&nbsp;</A>
+<H2>EXTENSIONS</H2>
+
+The <B>ncurses</B> library can be compiled with an option (<B>-DUSE_GETCAP</B>)
+that falls back to the old-style /etc/termcap file if the terminal setup code
+cannot find a terminfo entry corresponding to <B>TERM</B>.
+Use of this feature
+is not recommended, as it essentially includes an entire termcap compiler in
+the <B>ncurses</B> startup code, at significant cost in core and startup cycles.
+<P>
+
+The <B>ncurses</B> library includes facilities for capturing mouse events on
+certain terminals (including xterm).
+See the <B>mouse</B>(3NCURSES)
+manual page for details.
+<P>
+
+The <B>ncurses</B> library includes facilities for responding to window
+resizing events, e.g., when running in an xterm.
+See the <B>resizeterm</B>(3NCURSES)
+and <B>wresize</B>(3NCURSES) manual pages for details.
+In addition, the library may be configured with a SIGWINCH handler.
+<P>
+
+The <B>ncurses</B> library extends the fixed set of function key capabilities
+of terminals by allowing the application designer to define additional
+key sequences at runtime.
+See the <B>define_key</B>(3NCURSES)
+<B>key_defined</B>(3NCURSES),
+and <B>keyok</B>(3NCURSES) manual pages for details.
+<P>
+
+The <B>ncurses</B> library can exploit the capabilities of terminals which
+implement the ISO-6429 SGR 39 and SGR 49 controls, which allow an application
+to reset the terminal to its original foreground and background colors.
+From the users' perspective, the application is able to draw colored
+text on a background whose color is set independently, providing better
+control over color contrasts.
+See the <B>default_colors</B>(3NCURSES) manual page for details.
+<P>
+
+The <B>ncurses</B> library includes a function for directing application output
+to a printer attached to the terminal device.
+See the <B>print</B>(3NCURSES) manual page for details.
+<A NAME="lbAM">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+The <B>ncurses</B> library is intended to be BASE-level conformant with XSI
+Curses.
+The EXTENDED XSI Curses functionality
+(including color support) is supported.
+<P>
+
+A small number of local differences (that is, individual differences between
+the XSI Curses and <B>ncurses</B> calls) are described in <B>PORTABILITY</B>
+sections of the library man pages.
+<P>
+
+Unlike other implementations, this one checks parameters such as pointers
+to WINDOW structures to ensure they are not null.
+The main reason for providing this behavior is to guard against programmer
+error.
+The standard interface does not provide a way for the library
+to tell an application which of several possible errors were detected.
+Relying on this (or some other) extension will adversely affect the
+portability of curses applications.
+<P>
+
+This implementation also contains several extensions:
+
+<DL COMPACT>
+<DT>&bull;<DD>
+
+The routine <B>has_key</B> is not part of XPG4, nor is it present in SVr4.
+See the <B>getch</B>(3NCURSES) manual page for details.
+
+<DT>&bull;<DD>
+
+The routine <B>slk_attr</B> is not part of XPG4, nor is it present in SVr4.
+See the <B>slk</B>(3NCURSES) manual page for details.
+
+<DT>&bull;<DD>
+
+The routines <B>getmouse</B>, <B>mousemask</B>, <B>ungetmouse</B>,
+<B>mouseinterval</B>, and <B>wenclose</B> relating to mouse interfacing are not
+part of XPG4, nor are they present in SVr4.
+See the <B>mouse</B>(3NCURSES) manual page for details.
+
+<DT>&bull;<DD>
+
+The routine <B>mcprint</B> was not present in any previous curses implementation.
+See the <B>print</B>(3NCURSES) manual page for details.
+
+<DT>&bull;<DD>
+
+The routine <B>wresize</B> is not part of XPG4, nor is it present in SVr4.
+See the <B>wresize</B>(3NCURSES) manual page for details.
+
+<DT>&bull;<DD>
+
+The WINDOW structure's internal details can be hidden from application
+programs.
+See <B>opaque</B>(3NCURSES) for the discussion of <B>is_scrollok</B>, etc.
+
+<DT>&bull;<DD>
+
+This implementation can be configured to provide rudimentary support
+for multi-threaded applications.
+See <B>threads</B>(3NCURSES) for details.
+
+<DT>&bull;<DD>
+
+This implementation can also be configured to provide a set of functions which
+improve the ability to manage multiple screens.
+See <B>sp_funcs</B>(3NCURSES) for details.
+</DL>
+<P>
+
+In historic curses versions, delays embedded in the capabilities <B>cr</B>,
+<B>ind</B>, <B>cub1</B>, <B>ff</B> and <B>tab</B> activated corresponding delay
+bits in the UNIX tty driver.
+In this implementation, all padding is done by sending NUL bytes.
+This method is slightly more expensive, but narrows the interface
+to the UNIX kernel significantly and increases the package's portability
+correspondingly.
+<A NAME="lbAN">&nbsp;</A>
+<H2>NOTES</H2>
+
+The header file <B>&lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B> automatically includes the header files
+<B>&lt;<A HREF="file:///usr/include/stdio.h">stdio.h</A>&gt;</B> and <B>&lt;<A HREF="file:///usr/include/unctrl.h">unctrl.h</A>&gt;</B>.
+<P>
+
+If standard output from a <B>ncurses</B> program is re-directed to something
+which is not a tty, screen updates will be directed to standard error.
+This was an undocumented feature of AT&amp;T System V Release 3 curses.
+<A NAME="lbAO">&nbsp;</A>
+<H2>AUTHORS</H2>
+
+Zeyd M. Ben-Halim, Eric S. Raymond, Thomas E. Dickey.
+Based on pcurses by Pavel Curtis.
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DL>
+<DT><A HREF="#lbAE">Routine and Argument Names</A><DD>
+<DT><A HREF="#lbAF">Routine Name Index</A><DD>
+</DL>
+<DT><A HREF="#lbAG">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAH">ENVIRONMENT</A><DD>
+<DT><A HREF="#lbAI">ALTERNATE CONFIGURATIONS</A><DD>
+<DT><A HREF="#lbAJ">FILES</A><DD>
+<DT><A HREF="#lbAK">SEE ALSO</A><DD>
+<DT><A HREF="#lbAL">EXTENSIONS</A><DD>
+<DT><A HREF="#lbAM">PORTABILITY</A><DD>
+<DT><A HREF="#lbAN">NOTES</A><DD>
+<DT><A HREF="#lbAO">AUTHORS</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:57 GMT, April 08, 2015
+</BODY>
+</HTML>

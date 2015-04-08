@@ -1,0 +1,258 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of border_set</TITLE>
+</HEAD><BODY>
+<H1>border_set</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>border_set</B>,
+<B>wborder_set</B>,
+<B>box_set</B>,
+<B>hline_set</B>,
+<B>whline_set</B>,
+<B>mvhline_set</B>,
+<B>mvwhline_set</B>,
+<B>vline_set</B>,
+<B>wvline_set</B>,
+<B>mvvline_set</B>,
+<B>mvwvline_set</B> - create <B>curses</B> borders or lines using complex characters and renditions
+
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<P>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+<B>int border_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>ls</I>,&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>rs</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>ts</I>,&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>bs</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>tl</I>,&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>tr</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>bl</I>,&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>br</I>
+<B>);</B>
+<BR>
+
+<B>int wborder_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>WINDOW&nbsp;*win</B>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>ls</I>,&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>rs</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>ts</I>,&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>bs</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>tl</I>,&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>tr</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>bl</I>,&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>br</I><B>);</B>
+<BR>
+
+<B>int box_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>WINDOW&nbsp;*win</B>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>verch</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>horch</I><B>);</B>
+<BR>
+
+<B>int hline_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>wch</I>,&nbsp;<B>int&nbsp;</B><I>n</I><B>);</B>
+<BR>
+
+<B>int whline_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>WINDOW&nbsp;*</B><I>win</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>wch</I>,&nbsp;<B>int&nbsp;</B><I>n</I><B>);</B>
+<BR>
+
+<B>int mvhline_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>int&nbsp;</B><I>y</I>,&nbsp;<B>int&nbsp;</B><I>x</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>wch</I>,&nbsp;<B>int&nbsp;</B><I>n</I><B>);</B>
+<BR>
+
+<B>int mvwhline_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>WINDOW&nbsp;*</B><I>win</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>int&nbsp;</B><I>y</I>,&nbsp;<B>int&nbsp;</B><I>x</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>wch</I>,&nbsp;<B>int&nbsp;</B><I>n</I><B>);</B>
+<BR>
+
+<B>int vline_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>wch</I>,&nbsp;<B>int&nbsp;</B><I>n</I><B>);</B>
+<BR>
+
+<B>int wvline_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>WINDOW&nbsp;*</B><I>win</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>wch</I>,&nbsp;<B>int&nbsp;</B><I>n</I><B>);</B>
+<BR>
+
+<B>int mvvline_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>int&nbsp;</B><I>y</I>,&nbsp;<B>int&nbsp;</B><I>x</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>wch</I>,&nbsp;<B>int&nbsp;</B><I>n</I><B>);</B>
+<BR>
+
+<B>int mvwvline_set(</B>
+<BR>&nbsp;&nbsp;&nbsp;<B>WINDOW&nbsp;*</B><I>win</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>int&nbsp;</B><I>y</I>,&nbsp;<B>int&nbsp;</B><I>x</I>,
+<BR>&nbsp;&nbsp;&nbsp;<B>const&nbsp;cchar_t&nbsp;*</B><I>wch</I>,&nbsp;<B>int&nbsp;</B><I>n</I><B>);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+<P>
+
+The
+<B>border_set</B>
+and
+<B>wborder_set</B>
+functions draw a border around the edges of the current or specified window.
+These functions do not change the cursor position, and do not wrap.
+<P>
+
+Other than the window, each argument is a complex character with attributes:
+<DL COMPACT><DT><DD>
+<I>ls</I> - left side,
+<BR>
+
+<I>rs</I> - right side,
+<BR>
+
+<I>ts</I> - top side,
+<BR>
+
+<I>bs</I> - bottom side,
+<BR>
+
+<I>tl</I> - top left-hand corner,
+<BR>
+
+<I>tr</I> - top right-hand corner,
+<BR>
+
+<I>bl</I> - bottom left-hand corner, and
+<BR>
+
+<I>br</I> - bottom right-hand corner.
+</DL>
+
+<P>
+
+If any of these arguments is zero, then the corresponding
+default values (defined in <B>curses.h</B>) are used instead:
+<DL COMPACT><DT><DD>
+<B>WACS_VLINE</B>,
+<BR>
+
+<B>WACS_VLINE</B>,
+<BR>
+
+<B>WACS_HLINE</B>,
+<BR>
+
+<B>WACS_HLINE</B>,
+<BR>
+
+<B>WACS_ULCORNER</B>,
+<BR>
+
+<B>WACS_URCORNER</B>,
+<BR>
+
+<B>WACS_LLCORNER</B>, and
+<BR>
+
+<B>WACS_LRCORNER</B>.
+</DL>
+
+<P>
+
+<B>box_set(</B><I>win</I>, <I>verch</I><B>, </B><I>horch</I><B>);</B>
+is a shorthand for the following call:
+<P>
+
+<B>wborder_set(</B><I>win</I><B>, </B><I>verch</I><B>, </B><I>verch</I><B>,</B>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;<I>horch</I><B>,&nbsp;</B><I>horch</I><B>,&nbsp;NULL,&nbsp;NULL,&nbsp;NULL,&nbsp;NULL);</B>
+<P>
+
+The
+<B>*line_set</B>
+functions use
+<I>wch</I>
+to draw a line starting at the current cursor position in the window.
+The line is at most <I>n</I> characters long or as many as fit into the window.
+The current cursor position is not changed.
+<P>
+
+The
+<B>hline_set</B>,
+<B>mvhline_set</B>,
+<B>mvwhline_set</B>, and
+<B>whline_set</B>
+functions draw a line proceeding toward the last column of the same line.
+<P>
+
+The
+<B>vline_set</B>,
+<B>mvvline_set</B>,
+<B>mvwvline_set</B>, and
+<B>wvline_set</B>
+functions draw a line proceeding toward the last line of the window.
+<BR>
+
+<A NAME="lbAE">&nbsp;</A>
+<H2>NOTES</H2>
+
+<P>
+
+Note that
+<B>border_set</B>,
+<B>hline_set</B>,
+<B>mvhline_set</B>,
+<B>mvvline_set</B>,
+<B>mvwhline_set</B>,
+<B>mvwvline_set</B>, and
+<B>vline_set</B>
+may be macros.
+<BR>
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+<P>
+
+Upon successful completion, these functions return
+<B>OK</B>.
+Otherwise, they return
+<B>ERR</B>.
+<P>
+
+Functions using a window parameter return an error if it is null.
+<P>
+
+Functions with a &quot;mv&quot; prefix first perform a cursor movement using
+<B>wmove</B>, and return an error if the position is outside the window,
+or if the window pointer is null.
+<A NAME="lbAG">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>add_wch</B>(3NCURSES),
+<B>border</B>(3NCURSES),
+<B>outopts</B>(3NCURSES)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">NOTES</A><DD>
+<DT><A HREF="#lbAF">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAG">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:56 GMT, April 08, 2015
+</BODY>
+</HTML>

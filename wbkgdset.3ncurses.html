@@ -1,0 +1,117 @@
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of bkgd</TITLE>
+</HEAD><BODY>
+<H1>bkgd</H1>
+Section: Misc. Reference Manual Pages (3NCURSES)<BR>Updated: <BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+<B>bkgdset</B>, <B>wbkgdset</B>,
+<B>bkgd</B>, <B>wbkgd</B>,
+<B>getbkgd</B> - <B>curses</B> window background manipulation routines
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B>#include &lt;<A HREF="file:///usr/include/curses.h">curses.h</A>&gt;</B>
+<P>
+
+<B>void bkgdset(chtype ch);</B>
+<BR>
+
+<B>void wbkgdset(WINDOW *win, chtype ch);</B>
+<BR>
+
+<B>int bkgd(chtype ch);</B>
+<BR>
+
+<B>int wbkgd(WINDOW *win, chtype ch);</B>
+<BR>
+
+<B>chtype getbkgd(WINDOW *win);</B>
+<BR>
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+The <B>bkgdset</B> and <B>wbkgdset</B> routines manipulate the
+background of the named window.
+The window background is a <B>chtype</B> consisting of
+any combination of attributes (i.e., rendition) and a character.
+The attribute part of the background is combined (OR'ed) with all non-blank
+characters that are written into the window with <B>waddch</B>.  Both
+the character and attribute parts of the background are combined with
+the blank characters.  The background becomes a property of the
+character and moves with the character through any scrolling and
+insert/delete line/character operations.
+<P>
+
+To the extent possible on a particular terminal,
+the attribute part of the background is displayed
+as the graphic rendition of the character put on the screen.
+<P>
+
+The <B>bkgd</B> and <B>wbkgd</B> functions
+set the background property of the current or specified window
+and then apply this setting to every character position in that window:
+<P>
+
+<DL COMPACT><DT><DD>
+The rendition of every character on the screen is changed to
+the new background rendition.
+<P>
+
+Wherever the former background character
+appears, it is changed to the new background character.
+</DL>
+
+<P>
+
+The <B>getbkgd</B> function returns the given window's current background
+character/attribute pair.
+<A NAME="lbAE">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+The routines <B>bkgd</B> and <B>wbkgd</B> return the integer <B>OK</B>.
+The SVr4.0 manual says &quot;or a non-negative integer if <B>immedok</B> is set&quot;,
+but this appears to be an error.
+<A NAME="lbAF">&nbsp;</A>
+<H2>NOTES</H2>
+
+Note that <B>bkgdset</B> and <B>bkgd</B> may be macros.
+<A NAME="lbAG">&nbsp;</A>
+<H2>PORTABILITY</H2>
+
+These functions are described in the XSI Curses standard, Issue 4.
+It specifies that <B>bkgd</B> and <B>wbkgd</B> return <B>ERR</B> on failure,
+but gives no failure conditions.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<B>ncurses</B>(3NCURSES),
+<B>addch</B>(3NCURSES),
+<B>attr</B>(3NCURSES),
+<B>outopts</B>(3NCURSES)
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAF">NOTES</A><DD>
+<DT><A HREF="#lbAG">PORTABILITY</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 20:42:58 GMT, April 08, 2015
+</BODY>
+</HTML>
